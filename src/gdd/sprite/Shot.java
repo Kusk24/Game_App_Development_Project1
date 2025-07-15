@@ -11,6 +11,11 @@ public class Shot extends Sprite {
     public Shot() {
     }
 
+    @Override
+    public void act() {
+
+    }
+
     public Shot(int x, int y) {
 
         initShot(x, y);

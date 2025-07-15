@@ -31,4 +31,8 @@ public class Explosion extends Sprite {
     }
 
 
+    @Override
+    public void act() {
+
+    }
 }

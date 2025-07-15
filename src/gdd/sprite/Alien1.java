@@ -67,5 +67,10 @@ public class Alien1 extends Enemy {
 
             return destroyed;
         }
+
+        @Override
+        public void act() {
+
+        }
     }
 }

@@ -32,7 +32,13 @@ public class Enemy extends Sprite {
 
         this.x += direction;
     }
-/* 
+
+    @Override
+    public void act() {
+        // Default behavior when no direction is specified
+        // You can leave this empty, call act(0), or implement default movement
+    }
+/*
     public Bomb getBomb() {
 
         return bomb;
