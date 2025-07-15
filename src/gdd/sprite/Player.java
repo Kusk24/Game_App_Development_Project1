@@ -51,6 +51,8 @@ public class Player extends Sprite {
         this.currentSpeed = speed;
         if (speed > originalSpeed) {
             setCurrentSpeedLevel(currentSpeedLevel + 1); // Increment speed level
+        } else if (speed == originalSpeed) {
+            setCurrentSpeedLevel(0);
         } else {
             setCurrentSpeedLevel(currentSpeedLevel - 1); // Decrement speed level
         }
