@@ -329,6 +329,9 @@ public class Scene1 extends JPanel {
 
         g.setColor(Color.white);
         g.drawString("FRAME: " + frame, 10, 10);
+        g.drawString("Score " + 0, 10, 25);
+        g.drawString("Speed " + 0, 10, 40);
+        g.drawString("Shot Upgrade " + 0, 10, 55);
 
         g.setColor(Color.green);
 
