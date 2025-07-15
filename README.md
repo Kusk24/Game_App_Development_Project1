@@ -1,4 +1,4 @@
-# Project 1 of Game App Development
+# Project 1 of Game Design Development
 Using Java and Modifying the Space Invaders Project
 
 # Team Members
@@ -6,7 +6,7 @@ Using Java and Modifying the Space Invaders Project
 - Sam Yati     ~ ID: 6611982
 
 # GDD Space Invaders Project Starter
-This is a starting codebase for GDD Project.
+This is a starting codebase for GDD Project 1.
 
 ## References
 This project is based from this 
