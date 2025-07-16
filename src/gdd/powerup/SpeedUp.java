@@ -12,6 +12,9 @@ import javax.swing.ImageIcon;
 
 public class SpeedUp extends PowerUp {
 
+    public static final int MAX_SPEED_LEVEL = 18; // Maximum speed level
+    private static final int SPEED_INCREMENT = 4; // Speed increment per level
+
     public SpeedUp(int x, int y) {
         super(x, y);
         // Set image
@@ -30,8 +33,7 @@ public class SpeedUp extends PowerUp {
 
     public void upgrade(Player player) {
         // Upgrade the player with speed boost
-        player.setSpeed(player.getSpeed() + 4); // Increase player's speed by 1
+        player.setSpeed(player.getSpeed() + SPEED_INCREMENT); // Increase player's speed by 1
         this.die(); // Remove the power-up after use
     }
-
 }
