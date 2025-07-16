@@ -111,6 +111,9 @@ public class Scene1 extends JPanel {
         // TODO load this from a file
         spawnMap.put(50, new SpawnDetails("PowerUp-SpeedUp", 100, 0));
         spawnMap.put(210, new SpawnDetails("PowerUp-SpeedUp", 100, 0));
+        spawnMap.put(310, new SpawnDetails("PowerUp-SpeedUp", 100, 0));
+        spawnMap.put(410, new SpawnDetails("PowerUp-SpeedUp", 100, 0));
+        spawnMap.put(510, new SpawnDetails("PowerUp-SpeedUp", 100, 0));
         spawnMap.put(200, new SpawnDetails("Alien1", 200, 0));
         spawnMap.put(300, new SpawnDetails("Alien1", 300, 0));
 
@@ -331,7 +334,11 @@ public class Scene1 extends JPanel {
         g.setColor(Color.white);
         g.drawString("FRAME: " + frame, 10, 10);
         g.drawString("Score :" + deaths * 10 , 10, 25);
-        g.drawString("Speed Level: " + player.getCurrentSpeedLevel(), 10, 40);
+        if (player.getCurrentSpeedLevel() == 4) {
+            g.drawString("Speed Level: Max " + player.getCurrentSpeedLevel(), 10, 40);
+        } else {
+            g.drawString("Speed Level: " + player.getCurrentSpeedLevel(), 10, 40);
+        }
         g.drawString("Shot Upgrade :" + 0, 10, 55);
 
         g.setColor(Color.green);

@@ -45,6 +45,11 @@ public class Player extends Sprite {
     }
 
     public int setSpeed(int speed) {
+
+        if (speed > MAX_SPEED_LEVEL) {
+            return currentSpeed;
+        }
+
         if (speed < 1) {
             speed = 1; // Ensure speed is at least 1
         }
