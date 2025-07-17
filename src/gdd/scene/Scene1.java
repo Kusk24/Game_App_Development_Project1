@@ -5,6 +5,7 @@ import gdd.Game;
 import static gdd.Global.*;
 import gdd.SpawnDetails;
 import gdd.powerup.PowerUp;
+import gdd.powerup.ShotUp;
 import gdd.powerup.SpeedUp;
 import gdd.sprite.Alien1;
 import gdd.sprite.Enemy;
@@ -113,8 +114,10 @@ public class Scene1 extends JPanel {
         spawnMap.put(210, new SpawnDetails("PowerUp-SpeedUp", 100, 0));
         spawnMap.put(310, new SpawnDetails("PowerUp-SpeedUp", 100, 0));
         spawnMap.put(410, new SpawnDetails("PowerUp-SpeedUp", 100, 0));
+        spawnMap.put(450, new SpawnDetails("PowerUp-ShotUp", 100, 0));
         spawnMap.put(510, new SpawnDetails("PowerUp-SpeedUp", 100, 0));
         spawnMap.put(200, new SpawnDetails("Alien1", 200, 0));
+        spawnMap.put(600, new SpawnDetails("PowerUp-ShotUp", 100, 0));
         spawnMap.put(300, new SpawnDetails("Alien1", 300, 0));
 
         spawnMap.put(400, new SpawnDetails("Alien1", 400, 0));
@@ -406,6 +409,10 @@ public class Scene1 extends JPanel {
                     PowerUp speedUp = new SpeedUp(sd.x, sd.y);
                     powerups.add(speedUp);
                     break;
+                case "PowerUp-ShotUp":
+                    PowerUp shotUp = new ShotUp(sd.x, sd.y);
+                    powerups.add(shotUp);
+                    break;
                 default:
                     System.out.println("Unknown enemy type: " + sd.type);
                     break;
@@ -585,18 +592,21 @@ public class Scene1 extends JPanel {
                 System.out.println("Shots: " + shots.size());
                 switch (player.getCurrentShotPower()) {
                     case 1:
-                        //
+                        if (shots.size() < 4) {
+                            // Create a new shot and add it to the list
+                            Shot shot = new Shot(x, y, player.getCurrentShotPower());
+                            shots.add(shot);
+                        }//
                     case 2:
-                        //
+                        if (shots.size() < 4) {
+                            // Create a new shot and add it to the list
+                            Shot shot = new Shot(x, y, player.getCurrentShotPower());
+                            shots.add(shot);
+                        }//
                     case 3:
                         //
                     case 4:
                         //
-                }
-                if (shots.size() < 4) {
-                    // Create a new shot and add it to the list
-                    Shot shot = new Shot(x, y, player.getCurrentShotPower());
-                    shots.add(shot);
                 }
             }
         }

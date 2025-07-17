@@ -22,7 +22,7 @@ public class Player extends Sprite {
     private int originalSpeed = 2;
 
     //shot related
-    private int currentShotPower = 1;
+    private int currentShotPower = 2;
 
     private Rectangle bounds = new Rectangle(175,135,17,32);
 

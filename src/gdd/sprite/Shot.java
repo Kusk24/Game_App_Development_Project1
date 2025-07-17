@@ -2,6 +2,7 @@ package gdd.sprite;
 
 import static gdd.Global.*;
 import javax.swing.ImageIcon;
+import java.awt.*;
 
 public class Shot extends Sprite {
 
@@ -23,7 +24,7 @@ public class Shot extends Sprite {
 
     private void initShot(int x, int y, int level) {
 
-        var ii = new ImageIcon(IMG_SHOT);
+        var ii = shotLevel(level);
 
         // Scale the image to use the global scaling factor
         var scaledImage = ii.getImage().getScaledInstance(ii.getIconWidth() * SCALE_FACTOR,
@@ -37,13 +38,13 @@ public class Shot extends Sprite {
 
     public ImageIcon shotLevel(int level){
         if (level == 1) {
-            new ImageIcon(IMG_SHOT).getImage();
+            return new ImageIcon(IMG_SHOT);
         } else if (level == 2) {
-            new ImageIcon(IMG_SHOT2).getImage();
+            return new ImageIcon(IMG_SHOT2);
         } else if (level == 3) {
-            new ImageIcon(IMG_SHOT3).getImage();
-        } else if (level == 4) {
-            new ImageIcon(IMG_SHOT4).getImage();
+            return new ImageIcon(IMG_SHOT3);
+        } else {
+            return new ImageIcon(IMG_SHOT4);
         }
     }
 }

@@ -8,7 +8,7 @@ import static gdd.Global.IMG_POWERUP_SHOTUP;
 
 public class ShotUp extends PowerUp {
 
-    ShotUp(int x, int y){
+    public ShotUp(int x, int y){
         super(x, y);
         ImageIcon ii = new ImageIcon(IMG_POWERUP_SHOTUP);
         var scaledImage = ii.getImage().getScaledInstance(ii.getIconWidth() ,
