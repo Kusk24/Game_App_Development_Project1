@@ -21,6 +21,9 @@ public class Player extends Sprite {
     private static final long SPEED_RESET_DURATION = 15000; // 15 seconds
     private int originalSpeed = 2;
 
+    //shot related
+    private int currentShotPower = 1;
+
     private Rectangle bounds = new Rectangle(175,135,17,32);
 
     public Player() {
@@ -142,5 +145,27 @@ public class Player extends Sprite {
 
     public void applySpeedUp() {
         lastSpeedUpTime = System.currentTimeMillis();
+    }
+
+    public void increaseShotPower(int level){
+
+        if (level <= 1){
+            setCurrentShotPower(1);
+        } else if (level == 2) {
+            setCurrentShotPower(2);
+        } else if (level == 3) {
+            setCurrentShotPower(3);
+        } else {
+            setCurrentShotPower(4);
+        }
+        System.out.println("Shot power increased to level: " + currentSpeedLevel);
+    }
+
+    public int getCurrentShotPower() {
+        return currentShotPower;
+    }
+
+    public void setCurrentShotPower(int currentShotPower) {
+        this.currentShotPower = currentShotPower;
     }
 }

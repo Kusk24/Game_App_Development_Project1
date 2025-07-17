@@ -16,12 +16,12 @@ public class Shot extends Sprite {
 
     }
 
-    public Shot(int x, int y) {
+    public Shot(int x, int y, int level) {
 
-        initShot(x, y);
+        initShot(x, y, level);
     }
 
-    private void initShot(int x, int y) {
+    private void initShot(int x, int y, int level) {
 
         var ii = new ImageIcon(IMG_SHOT);
 
@@ -33,5 +33,17 @@ public class Shot extends Sprite {
 
         setX(x + H_SPACE);
         setY(y - V_SPACE);
+    }
+
+    public ImageIcon shotLevel(int level){
+        if (level == 1) {
+            new ImageIcon(IMG_SHOT).getImage();
+        } else if (level == 2) {
+            new ImageIcon(IMG_SHOT2).getImage();
+        } else if (level == 3) {
+            new ImageIcon(IMG_SHOT3).getImage();
+        } else if (level == 4) {
+            new ImageIcon(IMG_SHOT4).getImage();
+        }
     }
 }

@@ -583,13 +583,22 @@ public class Scene1 extends JPanel {
 
             if (key == KeyEvent.VK_SPACE && inGame) {
                 System.out.println("Shots: " + shots.size());
+                switch (player.getCurrentShotPower()) {
+                    case 1:
+                        //
+                    case 2:
+                        //
+                    case 3:
+                        //
+                    case 4:
+                        //
+                }
                 if (shots.size() < 4) {
                     // Create a new shot and add it to the list
-                    Shot shot = new Shot(x, y);
+                    Shot shot = new Shot(x, y, player.getCurrentShotPower());
                     shots.add(shot);
                 }
             }
-
         }
     }
 }
