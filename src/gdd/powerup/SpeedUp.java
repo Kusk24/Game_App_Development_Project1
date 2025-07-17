@@ -12,7 +12,7 @@ import javax.swing.ImageIcon;
 
 public class SpeedUp extends PowerUp {
 
-    public static final int MAX_SPEED_LEVEL = 18; // Maximum speed level
+    public static final int MAX_SPEED_LEVEL = 4; // Maximum speed level
     private static final int SPEED_INCREMENT = 4; // Speed increment per level
 
     public SpeedUp(int x, int y) {

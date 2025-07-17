@@ -8,7 +8,7 @@ import static gdd.Global.IMG_POWERUP_SHOTUP;
 
 public class ShotUp extends PowerUp {
 
-    ShotUp(int x, int y){
+    public ShotUp(int x, int y){
         super(x, y);
         ImageIcon ii = new ImageIcon(IMG_POWERUP_SHOTUP);
         var scaledImage = ii.getImage().getScaledInstance(ii.getIconWidth() ,
@@ -18,11 +18,15 @@ public class ShotUp extends PowerUp {
     }
     @Override
     public void upgrade(Player player) {
-
+        if (player.getCurrentShotPower() > 4 || player.getCurrentShotPower() < 1) {
+            return; // No upgrade if already at max speed level
+        }
+        player.increaseShotPower(player.getCurrentShotPower() + 1);
+        this.die();
     }
 
     @Override
     public void act() {
-
+        this.y += 2;
     }
 }

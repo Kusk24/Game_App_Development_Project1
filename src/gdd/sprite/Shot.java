@@ -16,14 +16,14 @@ public class Shot extends Sprite {
 
     }
 
-    public Shot(int x, int y) {
+    public Shot(int x, int y, int level) {
 
-        initShot(x, y);
+        initShot(x, y, level);
     }
 
-    private void initShot(int x, int y) {
+    private void initShot(int x, int y, int level) {
 
-        var ii = new ImageIcon(IMG_SHOT);
+        var ii = shotLevel(level);
 
         // Scale the image to use the global scaling factor
         var scaledImage = ii.getImage().getScaledInstance(ii.getIconWidth() * SCALE_FACTOR,
@@ -33,5 +33,19 @@ public class Shot extends Sprite {
 
         setX(x + H_SPACE);
         setY(y - V_SPACE);
+    }
+
+    public ImageIcon shotLevel(int level){
+        if (level == 1) {
+            return new ImageIcon(IMG_SHOT);
+        } else if (level == 2) {
+            return new ImageIcon(IMG_SHOT2);
+        } else if (level == 3) {
+            return new ImageIcon(IMG_SHOT3);
+        } else if (level == 4) {
+            return new ImageIcon(IMG_SHOT4);
+        } else {
+            return new ImageIcon(IMG_SHOT);
+        }
     }
 }
