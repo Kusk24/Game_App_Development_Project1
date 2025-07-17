@@ -42,8 +42,10 @@ public class Shot extends Sprite {
             return new ImageIcon(IMG_SHOT2);
         } else if (level == 3) {
             return new ImageIcon(IMG_SHOT3);
-        } else {
+        } else if (level == 4) {
             return new ImageIcon(IMG_SHOT4);
+        } else {
+            return new ImageIcon(IMG_SHOT);
         }
     }
 }

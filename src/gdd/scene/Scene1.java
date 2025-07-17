@@ -341,19 +341,19 @@ public class Scene1 extends JPanel {
         g.drawString("Score :" + deaths * 10 , 10, 25);
         //Speed
         if (player.getCurrentSpeedLevel() == 4) {
-            g.drawString("Speed Level: Max " + player.getCurrentSpeedLevel()+ " ("+ (System.currentTimeMillis() - player.getLastSpeedUpTime()) / 1000+")", 10, 40);
-        } else if (player.getCurrentSpeedLevel() >= 1 && player.getCurrentSpeedLevel() <= 3) {
-            g.drawString("Speed Level: " + player.getCurrentSpeedLevel()+ " ("+ (System.currentTimeMillis() - player.getLastSpeedUpTime()) / 1000+")", 10, 40);
+            g.drawString("Speed Upgraded: Max Level " + player.getCurrentSpeedLevel()+ " ("+ player.getLastSpeedUpCountDown() +")", 10, 40);
+        } else if (player.getCurrentSpeedLevel() >= 2 && player.getCurrentSpeedLevel() <= 3) {
+            g.drawString("Speed Upgraded: Level " + player.getCurrentSpeedLevel()+ " ("+ player.getLastSpeedUpCountDown() +")", 10, 40);
         } else {
-            g.drawString("Speed Level: NaN", 10, 40);
+            g.drawString("Speed: Base Level " + player.getCurrentSpeedLevel(), 10, 40);
         }
         //Shot Power
         if (player.getCurrentShotPower() == 4) {
-            g.drawString("Shot Upgrade : Max " + player.getCurrentShotPower()+ " ("+ (System.currentTimeMillis() - player.getLastShotUpTime()) / 1000+")", 10, 55);
-        } else if (player.getCurrentShotPower() >= 2 && player.getCurrentSpeedLevel() <= 3) {
-            g.drawString("Speed Level: " + player.getCurrentSpeedLevel() + " ("+ (System.currentTimeMillis() - player.getLastShotUpTime()) / 1000+")", 10, 55);
+            g.drawString("Shot Upgraded: Max Level " + player.getCurrentShotPower()+ " ("+ player.getLastShotUpCountDown() +")", 10, 55);
+        } else if (player.getCurrentShotPower() >= 2 && player.getCurrentShotPower() <= 3) {
+            g.drawString("Shot Upgraded: Level " + player.getCurrentShotPower() + " ("+ player.getLastShotUpCountDown()+")", 10, 55);
         } else {
-            g.drawString("Shot Upgrade : NaN" , 10, 55);
+            g.drawString("Shot: Base Level " + player.getCurrentShotPower(), 10, 55);
         }
         g.setColor(Color.green);
 
@@ -609,6 +609,7 @@ public class Scene1 extends JPanel {
                             Shot shot = new Shot(x, y, player.getCurrentShotPower());
                             shots.add(shot);
                         }//
+                        break;
                     case 2:
                         if (shots.size() < 8) {
                             // Create a new shot and add it to the list
@@ -617,6 +618,7 @@ public class Scene1 extends JPanel {
                             shots.add(shot);
                             shots.add(shot2);
                         }//
+                        break;
                     case 3:
                         if (shots.size() < 12) {
                             // Create a new shot and add it to the list
@@ -627,19 +629,23 @@ public class Scene1 extends JPanel {
                             shots.add(shot1);
                             shots.add(shot2);
                         }
+                        break;
                         //
                     case 4:
                         if (shots.size() < 16) {
                             // Create a new shot and add it to the list
-                            Shot shot = new Shot(x - 10, y, player.getCurrentShotPower());
-                            Shot shot1 = new Shot(x + 10, y, player.getCurrentShotPower());
-                            Shot shot2 = new Shot(x + 20, y, player.getCurrentShotPower());
-                            Shot shot3 = new Shot(x - 20, y, player.getCurrentShotPower());
+                            Shot shot = new Shot(x , y, player.getCurrentShotPower());
+                            Shot shot1 = new Shot(x - 10, y, player.getCurrentShotPower());
+                            Shot shot2 = new Shot(x + 10, y, player.getCurrentShotPower());
+                            Shot shot3 = new Shot(x + 20, y, player.getCurrentShotPower());
+                            Shot shot4 = new Shot(x - 20, y, player.getCurrentShotPower());
                             shots.add(shot);
                             shots.add(shot1);
                             shots.add(shot2);
                             shots.add(shot3);
+                            shots.add(shot4);
                         }//
+                        break;
                 }
             }
         }

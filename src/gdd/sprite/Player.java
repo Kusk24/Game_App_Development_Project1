@@ -13,7 +13,7 @@ public class Player extends Sprite {
     private int width;
     private int currentSpeed = 2;
 
-    private int currentSpeedLevel = 0;
+    private int currentSpeedLevel = 1; // Current speed level, starts at 1
 
     //speed related
     private long lastSpeedUpTime = 0;
@@ -47,25 +47,24 @@ public class Player extends Sprite {
         return currentSpeed;
     }
 
-    public int setSpeed(int speed) {
+    public void setSpeed(int speed) {
 
-        if (speed > MAX_SPEED_LEVEL) {
-            return currentSpeed;
+        if (speed > 18) {
+            return;
         }
 
-        if (speed < 1) {
-            speed = 1; // Ensure speed is at least 1
+        if (speed <= 2) {
+            speed = 2; // Ensure speed is at least 1
+        }
+        if (speed == originalSpeed) {
+            setCurrentSpeedLevel(1);
+        } else if (speed > currentSpeed) {
+            setCurrentSpeedLevel(currentSpeedLevel+1); // Increment speed level
+        } else {
+            setCurrentSpeedLevel(currentSpeedLevel-1); // Decrement speed level
         }
         this.currentSpeed = speed;
-        if (speed > originalSpeed) {
-            setCurrentSpeedLevel(currentSpeedLevel + 1); // Increment speed level
-        } else if (speed == originalSpeed) {
-            setCurrentSpeedLevel(0);
-        } else {
-            setCurrentSpeedLevel(currentSpeedLevel - 1); // Decrement speed level
-        }
         applySpeedUp();
-        return currentSpeed;
     }
 
     public void act() {
@@ -108,32 +107,15 @@ public class Player extends Sprite {
         return currentSpeedLevel;
     }
 
-    public int setCurrentSpeedLevel(int level) {
-        if (level < 0) {
-            level = 0; // Ensure level is at least 0
+    public void setCurrentSpeedLevel(int level) {
+        if (level < 1) {
+            level = 1; // Ensure level is at least 0
         }
         if (level > MAX_SPEED_LEVEL) {
             level = MAX_SPEED_LEVEL; // Ensure level does not exceed maximum
         }
         currentSpeedLevel = level;
-        return currentSpeedLevel;
     }
-
-//    public void checkSpeedReset() {
-//        if (lastSpeedUpTime > 0 && System.currentTimeMillis() - lastSpeedUpTime > SPEED_RESET_DURATION) {
-//            if (currentSpeed < originalSpeed) {
-//                currentSpeed = originalSpeed;// Reset the last speed up time
-//            } else {
-//                currentSpeed -= 4; //
-//            }
-//            if (currentSpeedLevel < 0){
-//                currentSpeedLevel = 0;
-//            } else {
-//                currentSpeedLevel -= 1; // Decrease speed level
-//            }
-//            lastSpeedUpTime = 0;
-//        }
-//    }
 
     public void checkSpeedReset() {
         if (lastSpeedUpTime > 0 && System.currentTimeMillis() - lastSpeedUpTime >= RESET_DURATION) {
@@ -148,7 +130,6 @@ public class Player extends Sprite {
     }
 
     public void increaseShotPower(int level){
-
         if (level <= 1){
             setCurrentShotPower(1);
         } else if (level == 2) {
@@ -182,11 +163,11 @@ public class Player extends Sprite {
         lastShotUpTime = System.currentTimeMillis();
     }
 
-    public long getLastShotUpTime() {
-        return lastShotUpTime;
+    public long getLastShotUpCountDown() {
+        return 15-((System.currentTimeMillis() - lastShotUpTime)/1000);
     }
 
-    public long getLastSpeedUpTime() {
-        return lastSpeedUpTime;
+    public long getLastSpeedUpCountDown() {
+        return 15-((System.currentTimeMillis() - lastSpeedUpTime)/1000);
     }
 }
