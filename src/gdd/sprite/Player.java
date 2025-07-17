@@ -2,7 +2,6 @@ package gdd.sprite;
 
 import static gdd.Global.*;
 import static gdd.powerup.SpeedUp.MAX_SPEED_LEVEL;
-
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import javax.swing.ImageIcon;
@@ -18,11 +17,12 @@ public class Player extends Sprite {
 
     //speed related
     private long lastSpeedUpTime = 0;
-    private static final long SPEED_RESET_DURATION = 15000; // 15 seconds
+    private static final long RESET_DURATION = 15000; // 15 seconds
     private int originalSpeed = 2;
 
     //shot related
-    private int currentShotPower = 2;
+    private int currentShotPower = 1;
+    private long lastShotUpTime = 0;
 
     private Rectangle bounds = new Rectangle(175,135,17,32);
 
@@ -136,7 +136,7 @@ public class Player extends Sprite {
 //    }
 
     public void checkSpeedReset() {
-        if (lastSpeedUpTime > 0 && System.currentTimeMillis() - lastSpeedUpTime >= SPEED_RESET_DURATION) {
+        if (lastSpeedUpTime > 0 && System.currentTimeMillis() - lastSpeedUpTime >= RESET_DURATION) {
             setSpeed(originalSpeed);
             lastSpeedUpTime = 0;
             System.out.println("Speed reset to original value");
@@ -167,5 +167,26 @@ public class Player extends Sprite {
 
     public void setCurrentShotPower(int currentShotPower) {
         this.currentShotPower = currentShotPower;
+        applyShotUp();
+    }
+
+    public void checkShotReset() {
+        if (lastShotUpTime > 0 && System.currentTimeMillis() - lastShotUpTime >= RESET_DURATION) {
+            setCurrentShotPower(1);
+            lastShotUpTime = 0;
+            System.out.println("Shot reset to original value");
+        }
+    }
+
+    public void applyShotUp() {
+        lastShotUpTime = System.currentTimeMillis();
+    }
+
+    public long getLastShotUpTime() {
+        return lastShotUpTime;
+    }
+
+    public long getLastSpeedUpTime() {
+        return lastSpeedUpTime;
     }
 }

@@ -2,7 +2,6 @@ package gdd.sprite;
 
 import static gdd.Global.*;
 import javax.swing.ImageIcon;
-import java.awt.*;
 
 public class Shot extends Sprite {
 

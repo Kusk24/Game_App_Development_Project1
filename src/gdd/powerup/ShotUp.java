@@ -18,7 +18,10 @@ public class ShotUp extends PowerUp {
     }
     @Override
     public void upgrade(Player player) {
-        player.increaseShotPower(1);
+        if (player.getCurrentShotPower() > 4 || player.getCurrentShotPower() < 1) {
+            return; // No upgrade if already at max speed level
+        }
+        player.increaseShotPower(player.getCurrentShotPower() + 1);
         this.die();
     }
 

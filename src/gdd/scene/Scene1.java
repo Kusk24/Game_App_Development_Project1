@@ -114,10 +114,12 @@ public class Scene1 extends JPanel {
         spawnMap.put(210, new SpawnDetails("PowerUp-SpeedUp", 100, 0));
         spawnMap.put(310, new SpawnDetails("PowerUp-SpeedUp", 100, 0));
         spawnMap.put(410, new SpawnDetails("PowerUp-SpeedUp", 100, 0));
-        spawnMap.put(450, new SpawnDetails("PowerUp-ShotUp", 100, 0));
+        spawnMap.put(230, new SpawnDetails("PowerUp-ShotUp", 140, 0));
+        spawnMap.put(350, new SpawnDetails("PowerUp-ShotUp", 140, 0));
+        spawnMap.put(100, new SpawnDetails("PowerUp-ShotUp", 140, 0));
+        spawnMap.put(800, new SpawnDetails("PowerUp-ShotUp", 140, 0));
         spawnMap.put(510, new SpawnDetails("PowerUp-SpeedUp", 100, 0));
         spawnMap.put(200, new SpawnDetails("Alien1", 200, 0));
-        spawnMap.put(600, new SpawnDetails("PowerUp-ShotUp", 100, 0));
         spawnMap.put(300, new SpawnDetails("Alien1", 300, 0));
 
         spawnMap.put(400, new SpawnDetails("Alien1", 400, 0));
@@ -337,13 +339,22 @@ public class Scene1 extends JPanel {
         g.setColor(Color.white);
         g.drawString("FRAME: " + frame, 10, 10);
         g.drawString("Score :" + deaths * 10 , 10, 25);
+        //Speed
         if (player.getCurrentSpeedLevel() == 4) {
-            g.drawString("Speed Level: Max " + player.getCurrentSpeedLevel(), 10, 40);
+            g.drawString("Speed Level: Max " + player.getCurrentSpeedLevel()+ " ("+ (System.currentTimeMillis() - player.getLastSpeedUpTime()) / 1000+")", 10, 40);
+        } else if (player.getCurrentSpeedLevel() >= 1 && player.getCurrentSpeedLevel() <= 3) {
+            g.drawString("Speed Level: " + player.getCurrentSpeedLevel()+ " ("+ (System.currentTimeMillis() - player.getLastSpeedUpTime()) / 1000+")", 10, 40);
         } else {
-            g.drawString("Speed Level: " + player.getCurrentSpeedLevel(), 10, 40);
+            g.drawString("Speed Level: NaN", 10, 40);
         }
-        g.drawString("Shot Upgrade :" + 0, 10, 55);
-
+        //Shot Power
+        if (player.getCurrentShotPower() == 4) {
+            g.drawString("Shot Upgrade : Max " + player.getCurrentShotPower()+ " ("+ (System.currentTimeMillis() - player.getLastShotUpTime()) / 1000+")", 10, 55);
+        } else if (player.getCurrentShotPower() >= 2 && player.getCurrentSpeedLevel() <= 3) {
+            g.drawString("Speed Level: " + player.getCurrentSpeedLevel() + " ("+ (System.currentTimeMillis() - player.getLastShotUpTime()) / 1000+")", 10, 55);
+        } else {
+            g.drawString("Shot Upgrade : NaN" , 10, 55);
+        }
         g.setColor(Color.green);
 
         if (inGame) {
@@ -388,6 +399,7 @@ public class Scene1 extends JPanel {
 
     private void update() {
 
+        player.checkShotReset();
         player.checkSpeedReset();
         // Check enemy spawn
         // TODO this approach can only spawn one enemy at a frame
@@ -598,15 +610,36 @@ public class Scene1 extends JPanel {
                             shots.add(shot);
                         }//
                     case 2:
-                        if (shots.size() < 4) {
+                        if (shots.size() < 8) {
                             // Create a new shot and add it to the list
-                            Shot shot = new Shot(x, y, player.getCurrentShotPower());
+                            Shot shot = new Shot(x - 10, y, player.getCurrentShotPower());
+                            Shot shot2 = new Shot(x + 10, y, player.getCurrentShotPower());
                             shots.add(shot);
+                            shots.add(shot2);
                         }//
                     case 3:
+                        if (shots.size() < 12) {
+                            // Create a new shot and add it to the list
+                            Shot shot = new Shot(x , y, player.getCurrentShotPower());
+                            Shot shot1 = new Shot(x - 20, y, player.getCurrentShotPower());
+                            Shot shot2 = new Shot(x + 20, y, player.getCurrentShotPower());
+                            shots.add(shot);
+                            shots.add(shot1);
+                            shots.add(shot2);
+                        }
                         //
                     case 4:
-                        //
+                        if (shots.size() < 16) {
+                            // Create a new shot and add it to the list
+                            Shot shot = new Shot(x - 10, y, player.getCurrentShotPower());
+                            Shot shot1 = new Shot(x + 10, y, player.getCurrentShotPower());
+                            Shot shot2 = new Shot(x + 20, y, player.getCurrentShotPower());
+                            Shot shot3 = new Shot(x - 20, y, player.getCurrentShotPower());
+                            shots.add(shot);
+                            shots.add(shot1);
+                            shots.add(shot2);
+                            shots.add(shot3);
+                        }//
                 }
             }
         }
