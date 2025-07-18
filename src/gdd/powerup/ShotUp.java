@@ -1,10 +1,8 @@
 package gdd.powerup;
 
-import gdd.sprite.Player;
-
-import javax.swing.*;
-
 import static gdd.Global.IMG_POWERUP_SHOTUP;
+import gdd.sprite.Player;
+import javax.swing.*;
 
 public class ShotUp extends PowerUp {
 
@@ -27,6 +25,6 @@ public class ShotUp extends PowerUp {
 
     @Override
     public void act() {
-        this.y += 2;
+        this.x -= 2; // Move left across the screen (side-scrolling)
     }
 }

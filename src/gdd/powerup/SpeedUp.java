@@ -27,8 +27,8 @@ public class SpeedUp extends PowerUp {
 
     public void act() {
         // SpeedUp specific behavior can be added here
-        // For now, it just moves down the screen
-        this.y += 2; // Move down by 2 pixel each frame
+        // For now, it just moves left across the screen (side-scrolling)
+        this.x -= 2; // Move left by 2 pixels each frame
     }
 
     public void upgrade(Player player) {

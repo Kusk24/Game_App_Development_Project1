@@ -8,8 +8,8 @@ import javax.swing.ImageIcon;
 
 public class Player extends Sprite {
 
-    private static final int START_X = 270;
-    private static final int START_Y = 540;
+    private static final int START_X = 10;
+    private static final int START_Y = 300;
     private int width;
     private int currentSpeed = 2;
 
@@ -68,25 +68,25 @@ public class Player extends Sprite {
     }
 
     public void act() {
-        x += dx;
+        y += dx; // Changed from x += dx to y += dx for vertical movement
 
-        if (x <= 2) {
-            x = 2;
+        if (y <= 2) {
+            y = 2;
         }
 
-        if (x >= BOARD_WIDTH - 2 * width) {
-            x = BOARD_WIDTH - 2 * width;
+        if (y >= BOARD_HEIGHT - 2 * width) {
+            y = BOARD_HEIGHT - 2 * width;
         }
     }
 
     public void keyPressed(KeyEvent e) {
         int key = e.getKeyCode();
 
-        if (key == KeyEvent.VK_LEFT) {
+        if (key == KeyEvent.VK_UP) { // Changed from LEFT to UP
             dx = -currentSpeed;
         }
 
-        if (key == KeyEvent.VK_RIGHT) {
+        if (key == KeyEvent.VK_DOWN) { // Changed from RIGHT to DOWN
             dx = currentSpeed;
         }
     }
@@ -94,11 +94,11 @@ public class Player extends Sprite {
     public void keyReleased(KeyEvent e) {
         int key = e.getKeyCode();
 
-        if (key == KeyEvent.VK_LEFT) {
+        if (key == KeyEvent.VK_UP) { // Changed from LEFT to UP
             dx = 0;
         }
 
-        if (key == KeyEvent.VK_RIGHT) {
+        if (key == KeyEvent.VK_DOWN) { // Changed from RIGHT to DOWN
             dx = 0;
         }
     }
