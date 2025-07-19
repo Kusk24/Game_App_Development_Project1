@@ -29,7 +29,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
-public class Scene1 extends JPanel {
+public class Scene1Ver extends JPanel {
 
     private int frame = 0;
     private List<PowerUp> powerups;
@@ -44,7 +44,7 @@ public class Scene1 extends JPanel {
 
     final int BLOCKS_TO_DRAW = BOARD_HEIGHT / BLOCKHEIGHT;
 
-    private int direction = -2; // Changed to move left faster
+    private int direction = -1;
     private int deaths = 0;
 
     private boolean inGame = true;
@@ -60,30 +60,30 @@ public class Scene1 extends JPanel {
     // TODO load this map from a file
     private int mapOffset = 0;
     private final int[][] MAP = {
-            {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-            {0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-            {0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-            {0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0},
-            {0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0},
-            {0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0},
-            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0},
-            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-            {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-            {0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-            {0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-            {0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0},
-            {0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0},
-            {0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0},
-            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0},
-            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1}
+        {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+        {0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+        {0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+        {0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0},
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0},
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0},
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+        {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+        {0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+        {0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+        {0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0},
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0},
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0},
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1}
     };
 
     private HashMap<Integer, SpawnDetails> spawnMap = new HashMap<>();
@@ -91,7 +91,7 @@ public class Scene1 extends JPanel {
     private int lastRowToShow;
     private int firstRowToShow;
 
-    public Scene1(Game game) {
+    public Scene1Ver(Game game) {
         this.game = game;
         // initBoard();
         // gameInit();
@@ -109,28 +109,28 @@ public class Scene1 extends JPanel {
     }
 
     private void loadSpawnDetails() {
-        // TODO load this from a file - spawn from right side
-        spawnMap.put(50, new SpawnDetails("PowerUp-SpeedUp", BOARD_WIDTH + 50, 100));
-        spawnMap.put(210, new SpawnDetails("PowerUp-SpeedUp", BOARD_WIDTH + 50, 100));
-        spawnMap.put(310, new SpawnDetails("PowerUp-SpeedUp", BOARD_WIDTH + 50, 100));
-        spawnMap.put(410, new SpawnDetails("PowerUp-SpeedUp", BOARD_WIDTH + 50, 100));
-        spawnMap.put(230, new SpawnDetails("PowerUp-ShotUp", BOARD_WIDTH + 50, 140));
-        spawnMap.put(350, new SpawnDetails("PowerUp-ShotUp", BOARD_WIDTH + 50, 140));
-        spawnMap.put(100, new SpawnDetails("PowerUp-ShotUp", BOARD_WIDTH + 50, 140));
-        spawnMap.put(800, new SpawnDetails("PowerUp-ShotUp", BOARD_WIDTH + 50, 140));
-        spawnMap.put(510, new SpawnDetails("PowerUp-SpeedUp", BOARD_WIDTH + 50, 100));
-        spawnMap.put(200, new SpawnDetails("Alien1", BOARD_WIDTH + 50, 200));
-        spawnMap.put(300, new SpawnDetails("Alien1", BOARD_WIDTH + 50, 300));
+        // TODO load this from a file
+        spawnMap.put(50, new SpawnDetails("PowerUp-SpeedUp", 100, 0));
+        spawnMap.put(210, new SpawnDetails("PowerUp-SpeedUp", 100, 0));
+        spawnMap.put(310, new SpawnDetails("PowerUp-SpeedUp", 100, 0));
+        spawnMap.put(410, new SpawnDetails("PowerUp-SpeedUp", 100, 0));
+        spawnMap.put(230, new SpawnDetails("PowerUp-ShotUp", 140, 0));
+        spawnMap.put(350, new SpawnDetails("PowerUp-ShotUp", 140, 0));
+        spawnMap.put(100, new SpawnDetails("PowerUp-ShotUp", 140, 0));
+        spawnMap.put(800, new SpawnDetails("PowerUp-ShotUp", 140, 0));
+        spawnMap.put(510, new SpawnDetails("PowerUp-SpeedUp", 100, 0));
+        spawnMap.put(200, new SpawnDetails("Alien1", 200, 0));
+        spawnMap.put(300, new SpawnDetails("Alien1", 300, 0));
 
-        spawnMap.put(400, new SpawnDetails("Alien1", BOARD_WIDTH + 50, 400));
-        spawnMap.put(401, new SpawnDetails("Alien1", BOARD_WIDTH + 50, 450));
-        spawnMap.put(402, new SpawnDetails("Alien1", BOARD_WIDTH + 50, 500));
-        spawnMap.put(403, new SpawnDetails("Alien1", BOARD_WIDTH + 50, 550));
+        spawnMap.put(400, new SpawnDetails("Alien1", 400, 0));
+        spawnMap.put(401, new SpawnDetails("Alien1", 450, 0));
+        spawnMap.put(402, new SpawnDetails("Alien1", 500, 0));
+        spawnMap.put(403, new SpawnDetails("Alien1", 550, 0));
 
-        spawnMap.put(500, new SpawnDetails("Alien1", BOARD_WIDTH + 50, 100));
-        spawnMap.put(501, new SpawnDetails("Alien1", BOARD_WIDTH + 50, 150));
-        spawnMap.put(502, new SpawnDetails("Alien1", BOARD_WIDTH + 50, 200));
-        spawnMap.put(503, new SpawnDetails("Alien1", BOARD_WIDTH + 50, 350));
+        spawnMap.put(500, new SpawnDetails("Alien1", 100, 0));
+        spawnMap.put(501, new SpawnDetails("Alien1", 150, 0));
+        spawnMap.put(502, new SpawnDetails("Alien1", 200, 0));
+        spawnMap.put(503, new SpawnDetails("Alien1", 350, 0));
     }
 
     private void initBoard() {
@@ -182,37 +182,39 @@ public class Scene1 extends JPanel {
     private void drawMap(Graphics g) {
         // Draw scrolling starfield background
 
-        // Calculate smooth scrolling offset (1 pixel per frame) - now horizontal
-        int scrollOffset = (frame) % BLOCKWIDTH;  // Changed from BLOCKHEIGHT
+        // Calculate smooth scrolling offset (1 pixel per frame)
+        int scrollOffset = (frame) % BLOCKHEIGHT;
 
-        // Calculate which columns to draw based on screen position
-        int baseCol = (frame) / BLOCKWIDTH;  // Changed from baseRow/BLOCKHEIGHT
-        int colsNeeded = (BOARD_WIDTH / BLOCKWIDTH) + 2; // Changed from BOARD_HEIGHT
+        // Calculate which rows to draw based on screen position
+        int baseRow = (frame) / BLOCKHEIGHT;
+        int rowsNeeded = (BOARD_HEIGHT / BLOCKHEIGHT) + 2; // +2 for smooth scrolling
 
-        // Loop through columns that should be visible on screen
-        for (int screenCol = 0; screenCol < colsNeeded; screenCol++) {  // Changed from screenRow
-            // Calculate which MAP column to use (with wrapping)
-            int mapCol = (baseCol + screenCol) % MAP[0].length;  // Changed indexing
+        // Loop through rows that should be visible on screen
+        for (int screenRow = 0; screenRow < rowsNeeded; screenRow++) {
+            // Calculate which MAP row to use (with wrapping)
+            int mapRow = (baseRow + screenRow) % MAP.length;
 
-            // Calculate X position for this column (moving left to right)
-            int x = (screenCol * BLOCKWIDTH) - scrollOffset;  // X now scrolls
+            // Calculate Y position for this row
+            // int y = (screenRow * BLOCKHEIGHT) - scrollOffset;
+            int y = BOARD_HEIGHT - ( (screenRow * BLOCKHEIGHT) - scrollOffset );
 
-            // Skip if column is completely off-screen
-            if (x > BOARD_WIDTH || x < -BLOCKWIDTH) {  // Changed boundary check
+            // Skip if row is completely off-screen
+            if (y > BOARD_HEIGHT || y < -BLOCKHEIGHT) {
                 continue;
             }
 
-            // Draw each row in this column
-            for (int row = 0; row < MAP.length; row++) {  // Changed from col loop
-                if (MAP[row][mapCol] == 1) {  // Changed array indexing
-                    // Calculate Y position (static vertical position)
-                    int y = row * BLOCKHEIGHT;  // Y is now static
+            // Draw each column in this row
+            for (int col = 0; col < MAP[mapRow].length; col++) {
+                if (MAP[mapRow][col] == 1) {
+                    // Calculate X position
+                    int x = col * BLOCKWIDTH;
 
                     // Draw a cluster of stars
                     drawStarCluster(g, x, y, BLOCKWIDTH, BLOCKHEIGHT);
                 }
             }
         }
+
     }
 
     private void drawStarCluster(Graphics g, int x, int y, int width, int height) {
@@ -226,15 +228,15 @@ public class Scene1 extends JPanel {
         g.fillOval(centerX - 2, centerY - 2, 4, 4);
 
         // Smaller surrounding stars
-        g.fillOval(centerX + 505, centerY + 500, 2, 2);
+        g.fillOval(centerX - 15, centerY - 10, 2, 2);
         g.fillOval(centerX + 12, centerY - 8, 2, 2);
         g.fillOval(centerX - 8, centerY + 12, 2, 2);
         g.fillOval(centerX + 10, centerY + 15, 2, 2);
 
         // Tiny stars for more detail
         g.fillOval(centerX - 20, centerY + 5, 1, 1);
-        g.fillOval(centerX + 18, centerY + 505, 1, 1);
-        g.fillOval(centerX - 5, centerY + 508, 1, 1);
+        g.fillOval(centerX + 18, centerY - 15, 1, 1);
+        g.fillOval(centerX - 5, centerY - 18, 1, 1);
         g.fillOval(centerX + 8, centerY + 20, 1, 1);
     }
 
@@ -259,9 +261,8 @@ public class Scene1 extends JPanel {
         for (PowerUp p : powerups) {
 
             if (p.isVisible()) {
+
                 g.drawImage(p.getImage(), p.getX(), p.getY(), this);
-                // Debug: Uncomment to see when powerups are being drawn
-                // System.out.println("Drawing PowerUp at (" + p.getX() + ", " + p.getY() + ")");
             }
 
             if (p.isDying()) {
@@ -336,23 +337,23 @@ public class Scene1 extends JPanel {
         g.fillRect(0, 0, d.width, d.height);
 
         g.setColor(Color.white);
-        g.drawString("FRAME: " + frame, BOARD_WIDTH - 250, 10);
-        g.drawString("Score :" + deaths * 10 , BOARD_WIDTH - 250, 25);
+        g.drawString("FRAME: " + frame, 10, 10);
+        g.drawString("Score :" + deaths * 10 , 10, 25);
         //Speed
         if (player.getCurrentSpeedLevel() == 4) {
-            g.drawString("Speed Upgraded: Max Level " + player.getCurrentSpeedLevel()+ " ("+ player.getLastSpeedUpCountDown() +")", BOARD_WIDTH - 250, 40);
+            g.drawString("Speed Upgraded: Max Level " + player.getCurrentSpeedLevel()+ " ("+ player.getLastSpeedUpCountDown() +")", 10, 40);
         } else if (player.getCurrentSpeedLevel() >= 2 && player.getCurrentSpeedLevel() <= 3) {
-            g.drawString("Speed Upgraded: Level " + player.getCurrentSpeedLevel()+ " ("+ player.getLastSpeedUpCountDown() +")", BOARD_WIDTH - 250, 40);
+            g.drawString("Speed Upgraded: Level " + player.getCurrentSpeedLevel()+ " ("+ player.getLastSpeedUpCountDown() +")", 10, 40);
         } else {
-            g.drawString("Speed: Base Level " + player.getCurrentSpeedLevel(), BOARD_WIDTH - 250, 40);
+            g.drawString("Speed: Base Level " + player.getCurrentSpeedLevel(), 10, 40);
         }
         //Shot Power
         if (player.getCurrentShotPower() == 4) {
-            g.drawString("Shot Upgraded: Max Level " + player.getCurrentShotPower()+ " ("+ player.getLastShotUpCountDown() +")", BOARD_WIDTH - 250, 55);
+            g.drawString("Shot Upgraded: Max Level " + player.getCurrentShotPower()+ " ("+ player.getLastShotUpCountDown() +")", 10, 55);
         } else if (player.getCurrentShotPower() >= 2 && player.getCurrentShotPower() <= 3) {
-            g.drawString("Shot Upgraded: Level " + player.getCurrentShotPower() + " ("+ player.getLastShotUpCountDown()+")", BOARD_WIDTH - 250, 55);
+            g.drawString("Shot Upgraded: Level " + player.getCurrentShotPower() + " ("+ player.getLastShotUpCountDown()+")", 10, 55);
         } else {
-            g.drawString("Shot: Base Level " + player.getCurrentShotPower(), BOARD_WIDTH - 250, 55);
+            g.drawString("Shot: Base Level " + player.getCurrentShotPower(), 10, 55);
         }
         g.setColor(Color.green);
 
@@ -383,9 +384,9 @@ public class Scene1 extends JPanel {
         g.fillRect(0, 0, BOARD_WIDTH, BOARD_HEIGHT);
 
         g.setColor(new Color(0, 32, 48));
-        g.fillRect(50, BOARD_WIDTH / 2 - 30, BOARD_WIDTH + 5000, 50);
+        g.fillRect(50, BOARD_WIDTH / 2 - 30, BOARD_WIDTH - 100, 50);
         g.setColor(Color.white);
-        g.drawRect(50, BOARD_WIDTH / 2 - 30, BOARD_WIDTH + 5000, 50);
+        g.drawRect(50, BOARD_WIDTH / 2 - 30, BOARD_WIDTH - 100, 50);
 
         var small = new Font("Helvetica", Font.BOLD, 14);
         var fontMetrics = this.getFontMetrics(small);
@@ -409,7 +410,6 @@ public class Scene1 extends JPanel {
                 case "Alien1":
                     Enemy enemy = new Alien1(sd.x, sd.y);
                     enemies.add(enemy);
-                    System.out.println("Spawned Alien1 at frame " + frame + " at position (" + sd.x + ", " + sd.y + ")");
                     break;
                 // Add more cases for different enemy types if needed
                 case "Alien2":
@@ -420,12 +420,10 @@ public class Scene1 extends JPanel {
                     // Handle speed up item spawn
                     PowerUp speedUp = new SpeedUp(sd.x, sd.y);
                     powerups.add(speedUp);
-                    System.out.println("Spawned SpeedUp at frame " + frame + " at position (" + sd.x + ", " + sd.y + ") - Total powerups: " + powerups.size());
                     break;
                 case "PowerUp-ShotUp":
                     PowerUp shotUp = new ShotUp(sd.x, sd.y);
                     powerups.add(shotUp);
-                    System.out.println("Spawned ShotUp at frame " + frame + " at position (" + sd.x + ", " + sd.y + ") - Total powerups: " + powerups.size());
                     break;
                 default:
                     System.out.println("Unknown enemy type: " + sd.type);
@@ -442,54 +440,22 @@ public class Scene1 extends JPanel {
         // player
         player.act();
 
-        // Power-ups - Fixed to move left like enemies
-        List<PowerUp> powerupsToRemove = new ArrayList<>();
+        // Power-ups
         for (PowerUp powerup : powerups) {
             if (powerup.isVisible()) {
-                powerup.act(); // This already handles the left movement
-
-                // Debug output every 30 frames to see powerup positions
-                if (frame % 30 == 0) {
-                    System.out.println("PowerUp at (" + powerup.getX() + ", " + powerup.getY() + ") - Visible: " + powerup.isVisible());
-                }
-
-                // Remove powerup if it goes off the left edge
-                if (powerup.getX() < -50) {
-                    powerup.die();
-                    powerupsToRemove.add(powerup);
-                    System.out.println("PowerUp removed (off-screen)");
-                }
-
+                powerup.act();
                 if (powerup.collidesWith(player)) {
                     powerup.upgrade(player);
-                    powerup.die(); // Make sure to kill the powerup
-                    powerupsToRemove.add(powerup);
-                    System.out.println("PowerUp collected by player");
                 }
-            } else {
-                // Remove invisible powerups
-                powerupsToRemove.add(powerup);
             }
         }
-        powerups.removeAll(powerupsToRemove);
 
-        // Enemies - keep existing movement
-        List<Enemy> enemiesToRemove = new ArrayList<>();
+        // Enemies
         for (Enemy enemy : enemies) {
             if (enemy.isVisible()) {
                 enemy.act(direction);
-
-                // Remove enemy if it goes off the left edge
-                if (enemy.getX() < -50) {
-                    enemy.die();
-                    enemiesToRemove.add(enemy);
-                    System.out.println("Enemy removed (off-screen)");
-                }
-            } else {
-                enemiesToRemove.add(enemy);
             }
         }
-        enemies.removeAll(enemiesToRemove);
 
         // shot
         List<Shot> shotsToRemove = new ArrayList<>();
@@ -520,16 +486,15 @@ public class Scene1 extends JPanel {
                     }
                 }
 
-                // Move shot horizontally to the right instead of vertically
-                int x = shot.getX();
-                x += 20; // Move right instead of up
+                // Keep vertical movement for Scene1Ver (original version)
+                int y = shot.getY();
+                y -= 20;
 
-                // Check if shot has moved off the right edge of screen
-                if (x > BOARD_WIDTH) {
+                if (y < 0) {
                     shot.die();
                     shotsToRemove.add(shot);
                 } else {
-                    shot.setX(x); // Update X position instead of Y
+                    shot.setY(y);
                 }
             }
         }
@@ -647,8 +612,8 @@ public class Scene1 extends JPanel {
                         break;
                     case 2:
                         if (shots.size() < 8) {
-                            // Create a new shot and add it to the list - FIXED positioning
-                            Shot shot = new Shot(x - 5, y, player.getCurrentShotPower());
+                            // Create a new shot and add it to the list
+                            Shot shot = new Shot(x - 10, y, player.getCurrentShotPower());
                             Shot shot2 = new Shot(x + 10, y, player.getCurrentShotPower());
                             shots.add(shot);
                             shots.add(shot2);
@@ -665,7 +630,7 @@ public class Scene1 extends JPanel {
                             shots.add(shot2);
                         }
                         break;
-                    //
+                        //
                     case 4:
                         if (shots.size() < 16) {
                             // Create a new shot and add it to the list

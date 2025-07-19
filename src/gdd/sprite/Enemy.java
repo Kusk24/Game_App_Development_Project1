@@ -35,8 +35,8 @@ public class Enemy extends Sprite {
 
     @Override
     public void act() {
-        // Default behavior when no direction is specified
-        // You can leave this empty, call act(0), or implement default movement
+        // Default behavior: move left for side scrolling
+        this.x -= 2;
     }
 /*
     public Bomb getBomb() {

@@ -29,7 +29,13 @@ public class Alien1 extends Enemy {
     }
 
     public void act(int direction) {
-        this.y ++;
+        this.x += direction; // Move based on direction parameter
+    }
+
+    @Override
+    public void act() {
+        // Default behavior: move left for side scrolling
+        this.x -= 2;
     }
 
     public Bomb getBomb() {
