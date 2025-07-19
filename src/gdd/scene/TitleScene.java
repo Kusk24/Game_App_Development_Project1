@@ -44,7 +44,7 @@ public class TitleScene extends JPanel {
         timer.start();
 
         initTitle();
-        initAudio();
+//        initAudio();
     }
 
     public void stop() {
