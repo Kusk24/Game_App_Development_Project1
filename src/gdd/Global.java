@@ -11,6 +11,8 @@ public class Global {
     public static final int BOARD_HEIGHT = 700; // Doubled from 350
     public static final int BORDER_RIGHT = 60; // Doubled from 30
     public static final int BORDER_LEFT = 10; // Doubled from 5
+    public static final int BORDER_TOP = 10;
+    public static final int BORDER_BOTTOM = 10;
 
     public static final int GROUND = 580; // Doubled from 290
     public static final int BOMB_HEIGHT = 10; // Doubled from 5

@@ -7,11 +7,8 @@ import gdd.SpawnDetails;
 import gdd.powerup.PowerUp;
 import gdd.powerup.ShotUp;
 import gdd.powerup.SpeedUp;
-import gdd.sprite.Alien1;
-import gdd.sprite.Enemy;
-import gdd.sprite.Explosion;
-import gdd.sprite.Player;
-import gdd.sprite.Shot;
+import gdd.sprite.*;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -52,6 +49,10 @@ public class Scene1 extends JPanel {
 
     private final Dimension d = new Dimension(BOARD_WIDTH, BOARD_HEIGHT);
     private final Random randomizer = new Random();
+
+    //Alien1 and Alien2
+    private List<Alien1> aleins1;
+    private List<Alien2> aleins2;
 
     private Timer timer;
     private final Game game;
@@ -110,27 +111,49 @@ public class Scene1 extends JPanel {
 
     private void loadSpawnDetails() {
         // TODO load this from a file - spawn from right side
-        spawnMap.put(50, new SpawnDetails("PowerUp-SpeedUp", BOARD_WIDTH + 50, 100));
+// === PowerUps ===
+        spawnMap.put(50,  new SpawnDetails("PowerUp-SpeedUp", BOARD_WIDTH + 50, 100));
+        spawnMap.put(100, new SpawnDetails("PowerUp-ShotUp",  BOARD_WIDTH + 50, 140));
         spawnMap.put(210, new SpawnDetails("PowerUp-SpeedUp", BOARD_WIDTH + 50, 100));
+        spawnMap.put(230, new SpawnDetails("PowerUp-ShotUp",  BOARD_WIDTH + 50, 140));
         spawnMap.put(310, new SpawnDetails("PowerUp-SpeedUp", BOARD_WIDTH + 50, 100));
+        spawnMap.put(350, new SpawnDetails("PowerUp-ShotUp",  BOARD_WIDTH + 50, 140));
         spawnMap.put(410, new SpawnDetails("PowerUp-SpeedUp", BOARD_WIDTH + 50, 100));
-        spawnMap.put(230, new SpawnDetails("PowerUp-ShotUp", BOARD_WIDTH + 50, 140));
-        spawnMap.put(350, new SpawnDetails("PowerUp-ShotUp", BOARD_WIDTH + 50, 140));
-        spawnMap.put(100, new SpawnDetails("PowerUp-ShotUp", BOARD_WIDTH + 50, 140));
-        spawnMap.put(800, new SpawnDetails("PowerUp-ShotUp", BOARD_WIDTH + 50, 140));
         spawnMap.put(510, new SpawnDetails("PowerUp-SpeedUp", BOARD_WIDTH + 50, 100));
+        spawnMap.put(800, new SpawnDetails("PowerUp-ShotUp",  BOARD_WIDTH + 50, 140));
+
+// === Alien1 - Wave 1 ===
         spawnMap.put(200, new SpawnDetails("Alien1", BOARD_WIDTH + 50, 200));
         spawnMap.put(300, new SpawnDetails("Alien1", BOARD_WIDTH + 50, 300));
-
         spawnMap.put(400, new SpawnDetails("Alien1", BOARD_WIDTH + 50, 400));
         spawnMap.put(401, new SpawnDetails("Alien1", BOARD_WIDTH + 50, 450));
         spawnMap.put(402, new SpawnDetails("Alien1", BOARD_WIDTH + 50, 500));
         spawnMap.put(403, new SpawnDetails("Alien1", BOARD_WIDTH + 50, 550));
 
+// === Alien1 - Wave 2 ===
         spawnMap.put(500, new SpawnDetails("Alien1", BOARD_WIDTH + 50, 100));
         spawnMap.put(501, new SpawnDetails("Alien1", BOARD_WIDTH + 50, 150));
         spawnMap.put(502, new SpawnDetails("Alien1", BOARD_WIDTH + 50, 200));
         spawnMap.put(503, new SpawnDetails("Alien1", BOARD_WIDTH + 50, 350));
+        spawnMap.put(504, new SpawnDetails("Alien1", BOARD_WIDTH + 50, 500));
+        spawnMap.put(505, new SpawnDetails("Alien1", BOARD_WIDTH + 50, 600));
+
+// === Alien2 - Wave 1 ===
+        spawnMap.put(600, new SpawnDetails("Alien2", BOARD_WIDTH + 50, 250));
+        spawnMap.put(601, new SpawnDetails("Alien2", BOARD_WIDTH + 50, 300));
+        spawnMap.put(602, new SpawnDetails("Alien2", BOARD_WIDTH + 50, 350));
+        spawnMap.put(603, new SpawnDetails("Alien2", BOARD_WIDTH + 50, 400));
+        spawnMap.put(604, new SpawnDetails("Alien2", BOARD_WIDTH + 50, 450));
+
+// === Alien2 - Wave 2 ===
+        spawnMap.put(700, new SpawnDetails("Alien2", BOARD_WIDTH + 50, 120));
+        spawnMap.put(701, new SpawnDetails("Alien2", BOARD_WIDTH + 50, 170));
+        spawnMap.put(702, new SpawnDetails("Alien2", BOARD_WIDTH + 50, 220));
+        spawnMap.put(703, new SpawnDetails("Alien2", BOARD_WIDTH + 50, 270));
+        spawnMap.put(704, new SpawnDetails("Alien2", BOARD_WIDTH + 50, 320));
+        spawnMap.put(705, new SpawnDetails("Alien2", BOARD_WIDTH + 50, 370));
+        spawnMap.put(706, new SpawnDetails("Alien2", BOARD_WIDTH + 50, 420));
+        spawnMap.put(707, new SpawnDetails("Alien2", BOARD_WIDTH + 50, 470));
     }
 
     private void initBoard() {
@@ -164,6 +187,8 @@ public class Scene1 extends JPanel {
     private void gameInit() {
 
         enemies = new ArrayList<>();
+        aleins1 = new ArrayList<>();
+        aleins2 = new ArrayList<>();
         powerups = new ArrayList<>();
         explosions = new ArrayList<>();
         shots = new ArrayList<>();
@@ -252,6 +277,32 @@ public class Scene1 extends JPanel {
                 enemy.die();
             }
         }
+
+//        for (Enemy alien1 : aleins1) {
+//
+//            if (alien1.isVisible()) {
+//
+//                g.drawImage(alien1.getImage(), alien1.getX(), alien1.getY(), this);
+//            }
+//
+//            if (alien1.isDying()) {
+//
+//                alien1.die();
+//            }
+//        }
+//
+//        for (Enemy alien2 : aleins2) {
+//
+//            if (alien2.isVisible()) {
+//
+//                g.drawImage(alien2.getImage(), alien2.getX(), alien2.getY(), this);
+//            }
+//
+//            if (alien2.isDying()) {
+//
+//                alien2.die();
+//            }
+//        }
     }
 
     private void drawPowreUps(Graphics g) {
@@ -413,8 +464,8 @@ public class Scene1 extends JPanel {
                     break;
                 // Add more cases for different enemy types if needed
                 case "Alien2":
-                    // Enemy enemy2 = new Alien2(sd.x, sd.y);
-                    // enemies.add(enemy2);
+                     Enemy enemy2 = new Alien2(sd.x, sd.y);
+                     enemies.add(enemy2);
                     break;
                 case "PowerUp-SpeedUp":
                     // Handle speed up item spawn
@@ -472,6 +523,31 @@ public class Scene1 extends JPanel {
             }
         }
         powerups.removeAll(powerupsToRemove);
+
+        for (Enemy enemy : enemies) {
+            int y = enemy.getY();
+
+            //from bottom to top
+                if (y >= BOARD_HEIGHT - BORDER_BOTTOM - ALIEN_HEIGHT && direction != -2) {
+                    direction = -2;
+                    for (Enemy e2 : enemies) {
+                        if (e2 instanceof Alien2) {
+                            e2.setY(e2.getY() + GO_DOWN);
+                        }
+                    }
+                }
+
+            //from top to bottom
+                if (y <= BORDER_TOP && direction != 2) {
+                    direction = 2;
+                    for (Enemy e : enemies) {
+                        if (e instanceof Alien2) {
+                            e.setY(e.getY() + GO_DOWN);
+                        }
+                    }
+                }
+            
+        }
 
         // Enemies - keep existing movement
         List<Enemy> enemiesToRemove = new ArrayList<>();
@@ -648,8 +724,8 @@ public class Scene1 extends JPanel {
                     case 2:
                         if (shots.size() < 8) {
                             // Create a new shot and add it to the list - FIXED positioning
-                            Shot shot = new Shot(x - 5, y, player.getCurrentShotPower());
-                            Shot shot2 = new Shot(x + 10, y, player.getCurrentShotPower());
+                            Shot shot = new Shot(x , y - 10, player.getCurrentShotPower());
+                            Shot shot2 = new Shot(x , y + 10, player.getCurrentShotPower());
                             shots.add(shot);
                             shots.add(shot2);
                         }//
@@ -658,8 +734,8 @@ public class Scene1 extends JPanel {
                         if (shots.size() < 12) {
                             // Create a new shot and add it to the list
                             Shot shot = new Shot(x , y, player.getCurrentShotPower());
-                            Shot shot1 = new Shot(x - 20, y, player.getCurrentShotPower());
-                            Shot shot2 = new Shot(x + 20, y, player.getCurrentShotPower());
+                            Shot shot1 = new Shot(x, y - 20, player.getCurrentShotPower());
+                            Shot shot2 = new Shot(x, y+ 20, player.getCurrentShotPower());
                             shots.add(shot);
                             shots.add(shot1);
                             shots.add(shot2);
@@ -670,10 +746,10 @@ public class Scene1 extends JPanel {
                         if (shots.size() < 16) {
                             // Create a new shot and add it to the list
                             Shot shot = new Shot(x , y, player.getCurrentShotPower());
-                            Shot shot1 = new Shot(x - 10, y, player.getCurrentShotPower());
-                            Shot shot2 = new Shot(x + 10, y, player.getCurrentShotPower());
-                            Shot shot3 = new Shot(x + 20, y, player.getCurrentShotPower());
-                            Shot shot4 = new Shot(x - 20, y, player.getCurrentShotPower());
+                            Shot shot1 = new Shot(x, y-15, player.getCurrentShotPower());
+                            Shot shot2 = new Shot(x, y+15, player.getCurrentShotPower());
+                            Shot shot3 = new Shot(x, y + 30, player.getCurrentShotPower());
+                            Shot shot4 = new Shot(x, y - 30, player.getCurrentShotPower());
                             shots.add(shot);
                             shots.add(shot1);
                             shots.add(shot2);
