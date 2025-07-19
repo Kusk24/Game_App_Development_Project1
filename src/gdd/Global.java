@@ -33,6 +33,7 @@ public class Global {
     // Images
     public static final String IMG_ENEMY = "src/images/alien.png";
     public static final String IMG_PLAYER = "src/images/player.png";
+    public static final String IMG_BOSS = "src/images/Boss-Sprite.png";
 
     public static final String IMG_SHOT = "src/images/shot.png";
     public static final String IMG_SHOT2 = "src/images/shot2.png";
