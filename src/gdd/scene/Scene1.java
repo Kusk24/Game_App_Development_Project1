@@ -546,7 +546,7 @@ public class Scene1 extends JPanel {
                         }
                     }
                 }
-            
+
         }
 
         // Enemies - keep existing movement
