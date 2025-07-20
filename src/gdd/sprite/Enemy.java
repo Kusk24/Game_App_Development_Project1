@@ -5,7 +5,7 @@ import javax.swing.ImageIcon;
 
 public class Enemy extends Sprite {
 
-    // private Bomb bomb;
+     private Bomb bomb;
 
     public Enemy(int x, int y) {
 
@@ -38,7 +38,7 @@ public class Enemy extends Sprite {
         // Default behavior: move left for side scrolling
         this.x -= 2;
     }
-/*
+
     public Bomb getBomb() {
 
         return bomb;
@@ -74,6 +74,11 @@ public class Enemy extends Sprite {
 
             return destroyed;
         }
+
+        @Override
+        public void act() {
+
+        }
     }
-*/
+
 }

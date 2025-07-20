@@ -348,12 +348,12 @@ public class Scene1 extends JPanel {
 
     private void drawBombing(Graphics g) {
 
-        // for (Enemy e : enemies) {
-        //     Enemy.Bomb b = e.getBomb();
-        //     if (!b.isDestroyed()) {
-        //         g.drawImage(b.getImage(), b.getX(), b.getY(), this);
-        //     }
-        // }
+         for (Enemy e : enemies) {
+             Enemy.Bomb b = e.getBomb();
+             if (!b.isDestroyed()) {
+                 g.drawImage(b.getImage(), b.getX(), b.getY(), this);
+             }
+         }
     }
 
     private void drawExplosions(Graphics g) {
@@ -415,6 +415,7 @@ public class Scene1 extends JPanel {
             drawAliens(g);
             drawPlayer(g);
             drawShot(g);
+            drawBombing(g);
 
         } else {
 
@@ -639,7 +640,7 @@ public class Scene1 extends JPanel {
         // }
         // bombs - collision detection
         // Bomb is with enemy, so it loops over enemies
-        /*
+
         for (Enemy enemy : enemies) {
 
             int chance = randomizer.nextInt(15);
@@ -670,13 +671,13 @@ public class Scene1 extends JPanel {
             }
 
             if (!bomb.isDestroyed()) {
-                bomb.setY(bomb.getY() + 1);
+                bomb.act();
                 if (bomb.getY() >= GROUND - BOMB_HEIGHT) {
                     bomb.setDestroyed(true);
                 }
             }
         }
-         */
+
     }
 
     private void doGameCycle() {

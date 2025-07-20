@@ -146,7 +146,7 @@ public class TitleScene extends JPanel {
             int key = e.getKeyCode();
             if (key == KeyEvent.VK_SPACE) {
                 // Load the next scene
-                game.loadScene2();
+                game.loadScene1();
             }
 
         }

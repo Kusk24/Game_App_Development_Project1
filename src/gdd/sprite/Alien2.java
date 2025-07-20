@@ -9,7 +9,7 @@ public class Alien2 extends Enemy {
 
     public Alien2(int x, int y) {
         super(x, y);
-        // initEnemy(x, y);
+         initEnemy(x, y);
     }
 
     private void initEnemy(int x, int y) {
@@ -44,18 +44,18 @@ public class Alien2 extends Enemy {
         return bomb;
     }
 
-    public class Bomb extends Sprite {
+    public class Bomb extends Enemy.Bomb {
 
         private boolean destroyed;
 
         public Bomb(int x, int y) {
-
+            super(x,y);
             initBomb(x, y);
         }
 
         private void initBomb(int x, int y) {
 
-            setDestroyed(true);
+//            setDestroyed(true);
 
             this.x = x;
             this.y = y;
@@ -76,7 +76,11 @@ public class Alien2 extends Enemy {
 
         @Override
         public void act() {
+            this.x -= 4;// Move the bomb left at a faster speed
 
+            if (this.x < -BOARD_WIDTH) {
+                setDestroyed(true);
+            }
         }
     }
 }

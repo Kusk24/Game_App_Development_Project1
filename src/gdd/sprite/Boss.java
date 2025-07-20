@@ -14,7 +14,6 @@ public class Boss extends Enemy{
     private int frame = 0;
 
     private boolean isFiring = false;
-    private boolean isStunned = false;
 
     private static final int ACT_FLYING = 0;
     private static final int ACT_SHOOT = 1;
@@ -108,11 +107,4 @@ public class Boss extends Enemy{
         this.bossLife = bossLife;
     }
 
-//    public boolean isStunned() {
-//        return isStunned;
-//    }
-
-//    public void setStunned(boolean stunned) {
-//        isStunned = stunned;
-//    }
 }
