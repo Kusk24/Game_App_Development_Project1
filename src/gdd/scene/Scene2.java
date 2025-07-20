@@ -39,6 +39,8 @@ public class Scene2 extends JPanel {
     private HashMap<Integer, SpawnDetails> spawnMap = new HashMap<>();
     private AudioPlayer audioPlayer;
 
+    private int direction = 1;
+
     private Boss boss;
 
     public Scene2(Game game) {
@@ -64,7 +66,7 @@ public class Scene2 extends JPanel {
         }
     }
 
-    private static final int POWER_INTERVAL = 250;
+    private static final int POWER_INTERVAL = 400;
     private static final double POWER_SPEED   = 8.0;
 
     private void spawnPowerBombs() {
@@ -345,12 +347,21 @@ public class Scene2 extends JPanel {
         player.checkShotReset();
         player.checkSpeedReset();
 
-        boss.act(0);
+
 
         if (boss.getBossLife() == 0) {
             inGame = false;
             timer.stop();
             message = "Game won!";
+        } else {
+            boss.setBossFrame(boss.getBossFrame() + 1);
+            boss.act(direction);
+        }
+
+        if (boss.getY() > BOARD_HEIGHT - boss.clips[boss.clipNo].height * SCALE_FACTOR) {
+            direction = -1; // Move down
+        } else if (boss.getY() < 0 ) {
+            direction = 1;
         }
 
         player.act();
@@ -413,6 +424,8 @@ public class Scene2 extends JPanel {
         }
         // spawn power shots
         if (frame % POWER_INTERVAL == 0 && inGame) {
+            boss.setBossFrame(0);
+            boss.setAction(1);
             spawnPowerBombs();
         }
 

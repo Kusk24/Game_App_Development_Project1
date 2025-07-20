@@ -64,8 +64,14 @@ public class Boss extends Enemy{
         return frame;
     }
 
+    public void setBossFrame(int frame) {
+        this.frame = frame;
+    }
+
     public void act(int direction) {
-        frame++;
+
+        this.y += direction ;
+
         switch (action) {
             case ACT_FLYING:
                 if (clipNo == 1 && frame > 10) {
@@ -78,9 +84,16 @@ public class Boss extends Enemy{
                 }
                 break;
             case ACT_SHOOT:
-                if (isFiring) {
-                    clipNo = 2;
-                }
+                if (frame > 20){
+                    frame = 0;
+                    clipNo = 1;
+                    setAction(ACT_FLYING);
+            } else {
+                    clipNo = 3;
+            }
+//                if (isFiring) {
+//                    clipNo = 2;
+//                }
                 break;
             case ACT_DYING:
                 if (frame > 100) {
