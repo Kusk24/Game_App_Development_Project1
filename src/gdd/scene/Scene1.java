@@ -672,7 +672,7 @@ public class Scene1 extends JPanel {
 
             if (!bomb.isDestroyed()) {
                 bomb.act();
-                if (bomb.getY() >= GROUND - BOMB_HEIGHT) {
+                if (bomb.getX() <= BOARD_WIDTH - BOMB_HEIGHT) {
                     bomb.setDestroyed(true);
                 }
             }
