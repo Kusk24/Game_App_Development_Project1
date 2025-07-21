@@ -9,11 +9,7 @@ import gdd.powerup.ShotUp;
 import gdd.powerup.SpeedUp;
 import gdd.sprite.*;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Toolkit;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
@@ -186,6 +182,7 @@ public class Scene1 extends JPanel {
         // }
         // }
         player = new Player(270, 540);
+        player.setVertical(true);
         // shot = new Shot();
     }
 
@@ -310,9 +307,32 @@ public class Scene1 extends JPanel {
 
     private void drawPlayer(Graphics g) {
 
-        if (player.isVisible()) {
+//        if (player.isVisible()) {
+//
+//            g.drawImage(player.getImage(), player.getX(), player.getY(), this);
+//        }
+        if (player != null && player.isVisible()) {
+            Rectangle clip = player.clips[player.clipNo];
+            int s = 1;  // same factor you used when you scaled the image
 
-            g.drawImage(player.getImage(), player.getX(), player.getY(), this);
+            // compute source coords on the scaled image
+            int sx1 = clip.x * s;
+            int sy1 = clip.y * s;
+            int sx2 = sx1 + clip.width * s;
+            int sy2 = sy1 + clip.height * s;
+
+            // compute destination rectangle on screen
+            int dx1 = player.getX();
+            int dy1 = player.getY();
+            int dx2 = dx1 + clip.width * s;
+            int dy2 = dy1 + clip.height * s;
+
+            g.drawImage(
+                    player.getImage(),
+                    dx1, dy1, dx2, dy2,   // where on the screen
+                    sx1, sy1, sx2, sy2,   // which part of the (already scaled) sheet
+                    this
+            );
         }
 
         if (player.isDying()) {

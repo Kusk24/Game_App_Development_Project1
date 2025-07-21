@@ -132,6 +132,7 @@ public class Scene2 extends JPanel {
         explosions = new ArrayList<>();
         shots = new ArrayList<>();
         player = new Player(START_X, START_Y); // Initialize player at starting position
+        player.setVertical(false);
         powerups= new ArrayList<>();
         bossBombs = new ArrayList<>();
         boss = new Boss(BOARD_WIDTH - 300, BOARD_HEIGHT/2 - 200); // Create boss instance

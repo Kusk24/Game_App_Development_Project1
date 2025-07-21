@@ -2,6 +2,8 @@ package gdd.sprite;
 
 import static gdd.Global.*;
 import static gdd.powerup.SpeedUp.MAX_SPEED_LEVEL;
+
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import javax.swing.ImageIcon;
 
@@ -25,11 +27,35 @@ public class Player extends Sprite {
         initPlayer(x, y);
     }
 
+    private boolean isVertical = true;
+
+    private static final int ACT_NORMAL = 0;
+    private static final int ACT_UP = 1;
+    private static final int ACT_LEFT = 2;
+    private static final int ACT_RIGHT = 3;
+
+    private int frame = 0;
+
+    private int action = ACT_NORMAL;
+
+    public int clipNo = 0;
+    public final Rectangle[] clips = {
+        new Rectangle(366, 19, 39, 77), //  0: V Normal
+        new Rectangle(424, 19, 39, 77),  // 1: V Up
+        new Rectangle(482, 19, 39, 77), // 2: V Left
+        new Rectangle(540, 19, 39, 77), // 3: V Right
+        new Rectangle(58, 19, 58, 39), //  4: H Normal
+        new Rectangle(135, 19, 58, 39),  // 5: H Right
+        new Rectangle(211, 19, 58, 39), // 6: H Up
+        new Rectangle(289, 19, 58, 39) // 7: H Down
+    };
+
+
     private void initPlayer(int x, int y) {
-        ImageIcon ii = new ImageIcon(IMG_PLAYER);
+        ImageIcon ii = new ImageIcon(IMG_SPRITE);
         var img = ii.getImage()
-                .getScaledInstance(ii.getIconWidth() * SCALE_FACTOR,
-                        ii.getIconHeight() * SCALE_FACTOR,
+                .getScaledInstance(ii.getIconWidth() ,
+                        ii.getIconHeight() ,
                         java.awt.Image.SCALE_SMOOTH);
         setImage(img);
         width  = img.getWidth(null);
@@ -69,13 +95,95 @@ public class Player extends Sprite {
         y = Math.max(0, Math.min(y, BOARD_HEIGHT - height));
     }
 
+//    public void act(boolean isVertical) {
+//
+//        if (isVertical) {
+//            // Vertical movement
+//            switch (action) {
+//                case ACT_UP:
+//                    dy = -currentSpeed;
+//                    dx = 0;
+//                    break;
+//                case ACT_LEFT:
+//                    dy = 0;
+//                    dx = -currentSpeed;
+//                    break;
+//                case ACT_RIGHT:
+//                    dy = 0;
+//                    dx = currentSpeed;
+//                    break;
+//                default: // ACT_NORMAL
+//                    dy = 0;
+//                    dx = 0;
+//            }
+//        } else {
+//            // Horizontal movement
+//            switch (action) {
+//                case ACT_UP:
+//                    dx = 0;
+//                    dy = -currentSpeed;
+//                    break;
+//                case ACT_LEFT:
+//                    dx = -currentSpeed;
+//                    dy = 0;
+//                    break;
+//                case ACT_RIGHT:
+//                    dx = currentSpeed;
+//                    dy = 0;
+//                    break;
+//                default: // ACT_NORMAL
+//                    dx = 0;
+//                    dy = 0;
+//            }
+//        }
+//        x += dx;
+//        y += dy;
+//
+//        // keep inside [0 .. BOARD_WIDTH − width], [0 .. BOARD_HEIGHT − height]
+//        x = Math.max(0, Math.min(x, BOARD_WIDTH  - width));
+//        y = Math.max(0, Math.min(y, BOARD_HEIGHT - height));
+//    }
+
     /** Handle arrow-key presses */
     public void keyPressed(KeyEvent e) {
-        switch (e.getKeyCode()) {
-            case KeyEvent.VK_LEFT:  dx = -currentSpeed; break;
-            case KeyEvent.VK_RIGHT: dx =  currentSpeed; break;
-            case KeyEvent.VK_UP:    dy = -currentSpeed; break;
-            case KeyEvent.VK_DOWN:  dy =  currentSpeed; break;
+        if (isVertical) {
+            switch (e.getKeyCode()) {
+                case KeyEvent.VK_LEFT:
+                    clipNo = 2;
+                    dx = -currentSpeed;
+                    break;
+                case KeyEvent.VK_RIGHT:
+                    clipNo = 3;
+                    dx =  currentSpeed;
+                    break;
+                case KeyEvent.VK_UP:
+                    clipNo = 1;
+                    dy = -currentSpeed;
+                    break;
+                case KeyEvent.VK_DOWN:
+                    clipNo = 0;
+                    dy =  currentSpeed;
+                    break;
+            }
+        } else {
+            switch (e.getKeyCode()) {
+                case KeyEvent.VK_LEFT:
+                    clipNo = 4;
+                    dx = -currentSpeed;
+                    break;
+                case KeyEvent.VK_RIGHT:
+                    clipNo = 5;
+                    dx =  currentSpeed;
+                    break;
+                case KeyEvent.VK_UP:
+                    clipNo = 6;
+                    dy = -currentSpeed;
+                    break;
+                case KeyEvent.VK_DOWN:
+                    clipNo = 7;
+                    dy =  currentSpeed;
+                    break;
+        }
         }
     }
 
@@ -83,9 +191,17 @@ public class Player extends Sprite {
     public void keyReleased(KeyEvent e) {
         switch (e.getKeyCode()) {
             case KeyEvent.VK_LEFT:
-            case KeyEvent.VK_RIGHT: dx = 0; break;
+
+            case KeyEvent.VK_RIGHT:
+                clipNo = 0;
+                dx = 0;
+                break;
             case KeyEvent.VK_UP:
-            case KeyEvent.VK_DOWN:  dy = 0; break;
+
+            case KeyEvent.VK_DOWN:
+                clipNo = 0;
+                dy = 0;
+                break;
         }
     }
 
@@ -143,5 +259,21 @@ public class Player extends Sprite {
     public long getLastSpeedUpCountDown() {
         return (RESET_DURATION_MS / 1000)
                 - ((System.currentTimeMillis() - lastSpeedUpTime) / 1000);
+    }
+
+    public int getPlayerFrame(){
+        return frame;
+    }
+
+    public void setPlayerFrame(int frame){
+        this.frame = frame;
+    }
+
+    public boolean isVertical() {
+        return isVertical;
+    }
+
+    public void setVertical(boolean vertical) {
+        isVertical = vertical;
     }
 }
