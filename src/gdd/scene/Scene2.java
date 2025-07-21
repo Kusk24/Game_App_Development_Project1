@@ -17,6 +17,8 @@ import java.util.*;
 import java.util.List;
 
 import static gdd.Global.*;
+import static gdd.sprite.Player.START_X;
+import static gdd.sprite.Player.START_Y;
 
 public class Scene2 extends JPanel {
 
@@ -129,7 +131,7 @@ public class Scene2 extends JPanel {
     private void gameInit() {
         explosions = new ArrayList<>();
         shots = new ArrayList<>();
-        player = new Player();
+        player = new Player(START_X, START_Y); // Initialize player at starting position
         powerups= new ArrayList<>();
         bossBombs = new ArrayList<>();
         boss = new Boss(BOARD_WIDTH - 300, BOARD_HEIGHT/2 - 200); // Create boss instance

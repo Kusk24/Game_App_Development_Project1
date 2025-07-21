@@ -2,45 +2,41 @@ package gdd.sprite;
 
 import static gdd.Global.*;
 import static gdd.powerup.SpeedUp.MAX_SPEED_LEVEL;
-import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import javax.swing.ImageIcon;
 
 public class Player extends Sprite {
 
-    private static final int START_X = 10;
-    private static final int START_Y = 300;
-    private int width;
+    public static final int START_X = 10;
+    public static final int START_Y = 300;
+    private static final long RESET_DURATION_MS = 15_000; // 15 seconds
+
+    private int width, height;
     private int currentSpeed = 2;
-
-    private int currentSpeedLevel = 1; // Current speed level, starts at 1
-
-    //speed related
-    private long lastSpeedUpTime = 0;
-    private static final long RESET_DURATION = 15000; // 15 seconds
     private int originalSpeed = 2;
+    private int currentSpeedLevel = 1;
 
-    //shot related
+    private long lastSpeedUpTime = 0;
+
     private int currentShotPower = 1;
     private long lastShotUpTime = 0;
 
-    private Rectangle bounds = new Rectangle(175,135,17,32);
-
-    public Player() {
-        initPlayer();
+    public Player(int x, int y) {
+        initPlayer(x, y);
     }
 
-    private void initPlayer() {
-        var ii = new ImageIcon(IMG_PLAYER);
+    private void initPlayer(int x, int y) {
+        ImageIcon ii = new ImageIcon(IMG_PLAYER);
+        var img = ii.getImage()
+                .getScaledInstance(ii.getIconWidth() * SCALE_FACTOR,
+                        ii.getIconHeight() * SCALE_FACTOR,
+                        java.awt.Image.SCALE_SMOOTH);
+        setImage(img);
+        width  = img.getWidth(null);
+        height = img.getHeight(null);
 
-        // Scale the image to use the global scaling factor
-        var scaledImage = ii.getImage().getScaledInstance(ii.getIconWidth() * SCALE_FACTOR,
-                ii.getIconHeight() * SCALE_FACTOR,
-                java.awt.Image.SCALE_SMOOTH);
-        setImage(scaledImage);
-
-        setX(START_X);
-        setY(START_Y);
+        setX(x);
+        setY(y);
     }
 
     public int getSpeed() {
@@ -48,58 +44,48 @@ public class Player extends Sprite {
     }
 
     public void setSpeed(int speed) {
+        // Clamp speed between 2 and 18
+        speed = Math.max(2, Math.min(speed, 18));
 
-        if (speed > 18) {
-            return;
-        }
-
-        if (speed <= 2) {
-            speed = 2; // Ensure speed is at least 1
-        }
         if (speed == originalSpeed) {
             setCurrentSpeedLevel(1);
         } else if (speed > currentSpeed) {
-            setCurrentSpeedLevel(currentSpeedLevel+1); // Increment speed level
+            setCurrentSpeedLevel(currentSpeedLevel + 1);
         } else {
-            setCurrentSpeedLevel(currentSpeedLevel-1); // Decrement speed level
+            setCurrentSpeedLevel(currentSpeedLevel - 1);
         }
-        this.currentSpeed = speed;
+
+        currentSpeed = speed;
         applySpeedUp();
     }
 
+    /** Called once per frame to move & keep inside the board */
     public void act() {
-        y += dx; // Changed from x += dx to y += dx for vertical movement
+        x += dx;
+        y += dy;
 
-        if (y <= 2) {
-            y = 2;
-        }
-
-        if (y >= BOARD_HEIGHT - 2 * width) {
-            y = BOARD_HEIGHT - 2 * width;
-        }
+        // keep inside [0 .. BOARD_WIDTH − width], [0 .. BOARD_HEIGHT − height]
+        x = Math.max(0, Math.min(x, BOARD_WIDTH  - width));
+        y = Math.max(0, Math.min(y, BOARD_HEIGHT - height));
     }
 
+    /** Handle arrow-key presses */
     public void keyPressed(KeyEvent e) {
-        int key = e.getKeyCode();
-
-        if (key == KeyEvent.VK_UP) { // Changed from LEFT to UP
-            dx = -currentSpeed;
-        }
-
-        if (key == KeyEvent.VK_DOWN) { // Changed from RIGHT to DOWN
-            dx = currentSpeed;
+        switch (e.getKeyCode()) {
+            case KeyEvent.VK_LEFT:  dx = -currentSpeed; break;
+            case KeyEvent.VK_RIGHT: dx =  currentSpeed; break;
+            case KeyEvent.VK_UP:    dy = -currentSpeed; break;
+            case KeyEvent.VK_DOWN:  dy =  currentSpeed; break;
         }
     }
 
+    /** Stop movement on key release */
     public void keyReleased(KeyEvent e) {
-        int key = e.getKeyCode();
-
-        if (key == KeyEvent.VK_UP) { // Changed from LEFT to UP
-            dx = 0;
-        }
-
-        if (key == KeyEvent.VK_DOWN) { // Changed from RIGHT to DOWN
-            dx = 0;
+        switch (e.getKeyCode()) {
+            case KeyEvent.VK_LEFT:
+            case KeyEvent.VK_RIGHT: dx = 0; break;
+            case KeyEvent.VK_UP:
+            case KeyEvent.VK_DOWN:  dy = 0; break;
         }
     }
 
@@ -108,66 +94,54 @@ public class Player extends Sprite {
     }
 
     public void setCurrentSpeedLevel(int level) {
-        if (level < 1) {
-            level = 1; // Ensure level is at least 0
-        }
-        if (level > MAX_SPEED_LEVEL) {
-            level = MAX_SPEED_LEVEL; // Ensure level does not exceed maximum
-        }
-        currentSpeedLevel = level;
+        currentSpeedLevel = Math.max(1, Math.min(level, MAX_SPEED_LEVEL));
     }
 
     public void checkSpeedReset() {
-        if (lastSpeedUpTime > 0 && System.currentTimeMillis() - lastSpeedUpTime >= RESET_DURATION) {
+        if (lastSpeedUpTime > 0
+                && System.currentTimeMillis() - lastSpeedUpTime >= RESET_DURATION_MS) {
             setSpeed(originalSpeed);
             lastSpeedUpTime = 0;
             System.out.println("Speed reset to original value");
         }
     }
 
-    public void applySpeedUp() {
+    private void applySpeedUp() {
         lastSpeedUpTime = System.currentTimeMillis();
     }
 
-    public void increaseShotPower(int level){
-        if (level <= 1){
-            setCurrentShotPower(1);
-        } else if (level == 2) {
-            setCurrentShotPower(2);
-        } else if (level == 3) {
-            setCurrentShotPower(3);
-        } else {
-            setCurrentShotPower(4);
-        }
-        System.out.println("Shot power increased to level: " + currentSpeedLevel);
+    public void increaseShotPower(int level) {
+        // clamp level between 1 and 4
+        level = Math.max(1, Math.min(level, 4));
+        setCurrentShotPower(level);
+        System.out.println("Shot power increased to level: " + currentShotPower);
     }
 
     public int getCurrentShotPower() {
         return currentShotPower;
     }
 
-    public void setCurrentShotPower(int currentShotPower) {
-        this.currentShotPower = currentShotPower;
-        applyShotUp();
+    public void setCurrentShotPower(int power) {
+        currentShotPower = power;
+        lastShotUpTime = System.currentTimeMillis();
     }
 
     public void checkShotReset() {
-        if (lastShotUpTime > 0 && System.currentTimeMillis() - lastShotUpTime >= RESET_DURATION) {
+        if (lastShotUpTime > 0
+                && System.currentTimeMillis() - lastShotUpTime >= RESET_DURATION_MS) {
             setCurrentShotPower(1);
             lastShotUpTime = 0;
             System.out.println("Shot reset to original value");
         }
     }
 
-    public void applyShotUp() {
-        lastShotUpTime = System.currentTimeMillis();
-    }
-
     public long getLastShotUpCountDown() {
-        return 15-((System.currentTimeMillis() - lastShotUpTime)/1000);
+        return (RESET_DURATION_MS / 1000)
+                - ((System.currentTimeMillis() - lastShotUpTime) / 1000);
     }
 
     public long getLastSpeedUpCountDown() {
-        return 15-((System.currentTimeMillis() - lastSpeedUpTime)/1000);
+        return (RESET_DURATION_MS / 1000)
+                - ((System.currentTimeMillis() - lastSpeedUpTime) / 1000);
     }
 }
