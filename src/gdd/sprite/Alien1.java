@@ -17,7 +17,7 @@ public class Alien1 extends Enemy {
         this.x = x;
         this.y = y;
 
-        bomb = new Bomb(x, y);
+        bomb = new Bomb(x , y);
 
         var ii = new ImageIcon(IMG_ENEMY);
 
@@ -28,14 +28,16 @@ public class Alien1 extends Enemy {
         setImage(scaledImage);
     }
 
+    // For vertical scrolling, Alien1 moves straight down
     public void act(int direction) {
-        this.x -= 2; // Move based on direction parameter
+        // Movement is handled by Scene1 for better control
+        // This method can be used for any specific Alien1 behavior
     }
 
     @Override
     public void act() {
-        // Default behavior: move left for side scrolling
-        this.x -= 2;
+        // Default behavior for when no specific movement is needed
+        // Movement is controlled by Scene1 for vertical scrolling
     }
 
     public Bomb getBomb() {
@@ -76,9 +78,21 @@ public class Alien1 extends Enemy {
 
         @Override
         public void act() {
-            this.x -= 6; // Move the bomb left at a faster speed
+            this.x -= 4; // Move the bomb left at a faster speed
 
-            if (this.x < -BOARD_WIDTH) {
+            if (this.x < 0) {
+                setDestroyed(true);
+            }
+        }
+
+        public void act(Boolean isVertical) {
+            if (isVertical) {
+                this.y += 3; // Move down if vertical
+            } else {
+                this.x -= 4; // Move left if not vertical
+            }
+
+            if (this.x < 0 || this.y < 0) {
                 setDestroyed(true);
             }
         }

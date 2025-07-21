@@ -27,4 +27,13 @@ public class ShotUp extends PowerUp {
     public void act() {
         this.x -= 2; // Move left across the screen (side-scrolling)
     }
+
+    public void act(boolean isVertical) {
+        // If vertical scrolling is enabled, move up or down
+        if (isVertical) {
+            this.y += 2; // Move down by 2 pixels each frame
+        } else {
+            this.x -= 2; // Move left by 2 pixels each frame
+        }
+    }
 }

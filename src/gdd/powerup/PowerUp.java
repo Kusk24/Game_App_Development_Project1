@@ -16,4 +16,7 @@ abstract public class PowerUp extends Sprite {
     }
 
     abstract public void upgrade(Player player);
+
+    abstract public void act(boolean isVertical);
 }
+

@@ -33,6 +33,14 @@ public class Enemy extends Sprite {
         this.x += direction;
     }
 
+    public void act(int direction, boolean isVertical) {
+        if (isVertical) {
+            this.y += direction; // Move vertically based on direction parameter
+        } else {
+            this.x += direction; // Move horizontally based on direction parameter
+        }
+    }
+
     @Override
     public void act() {
         // Default behavior: move left for side scrolling
@@ -78,6 +86,18 @@ public class Enemy extends Sprite {
         @Override
         public void act() {
 
+        }
+
+        public void act(Boolean isVertical) {
+            if (isVertical) {
+                this.y += 2; // Move down if vertical
+            } else {
+                this.x -= 4; // Move left if not vertical
+            }
+
+            if (this.x < 0 || this.y < 0) {
+                setDestroyed(true);
+            }
         }
     }
 

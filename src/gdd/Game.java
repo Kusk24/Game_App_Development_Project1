@@ -1,7 +1,7 @@
 package gdd;
 
 import gdd.scene.Scene1;
-import gdd.scene.Scene1Ver;
+import gdd.scene.Scene1Hor;
 import gdd.scene.Scene2;
 import gdd.scene.TitleScene;
 import javax.swing.JFrame;
