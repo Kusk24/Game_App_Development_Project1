@@ -5,6 +5,10 @@ import static gdd.powerup.SpeedUp.MAX_SPEED_LEVEL;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
 public class Player extends Sprite {
@@ -12,6 +16,7 @@ public class Player extends Sprite {
     public static final int START_X = 10;
     public static final int START_Y = 300;
     private static final long RESET_DURATION_MS = 15_000; // 15 seconds
+    private BufferedImage sheet;
 
     private int width, height;
     private int currentSpeed = 2;
@@ -53,6 +58,11 @@ public class Player extends Sprite {
 
     private void initPlayer(int x, int y) {
         ImageIcon ii = new ImageIcon(IMG_SPRITE);
+//        try {
+//            sheet = ImageIO.read(getClass().getResource(IMG_SPRITE));
+//        } catch (IOException e) {
+//            throw new UncheckedIOException(e);
+//        }
         var img = ii.getImage()
                 .getScaledInstance(ii.getIconWidth() ,
                         ii.getIconHeight() ,
@@ -63,6 +73,26 @@ public class Player extends Sprite {
 
         setX(x);
         setY(y);
+    }
+
+    public void updateFrameImage() {
+        Rectangle clip = clips[clipNo];
+        // grab just that rectangle
+        BufferedImage frameImg = sheet.getSubimage(
+                clip.x, clip.y,
+                clip.width, clip.height
+        );
+
+        // scale if you need SCALE_FACTOR
+        Image scaled = frameImg.getScaledInstance(
+                clip.width  * SCALE_FACTOR,
+                clip.height * SCALE_FACTOR,
+                Image.SCALE_SMOOTH
+        );
+
+        setImage(scaled);
+        width  = scaled.getWidth(null);
+        height = scaled.getHeight(null);
     }
 
     public int getSpeed() {
@@ -91,8 +121,22 @@ public class Player extends Sprite {
         y += dy;
 
         // keep inside [0 .. BOARD_WIDTH − width], [0 .. BOARD_HEIGHT − height]
-        x = Math.max(0, Math.min(x, BOARD_WIDTH  - width));
-        y = Math.max(0, Math.min(y, BOARD_HEIGHT - height));
+//        x = Math.max(0, Math.min(x, BOARD_WIDTH  - width));
+//        y = Math.max(0, Math.min(y, BOARD_HEIGHT - height));
+
+
+        if (x < 0){
+            x = 0;
+        } else if (x > BOARD_WIDTH - width) {
+            x = BOARD_WIDTH - width;
+        }
+        if (y < 0){
+            y = 0;
+        } else if (y > BOARD_HEIGHT - height) {
+            y = BOARD_HEIGHT - height;
+        }
+//        x = Math.max(0, Math.min(x, BOARD_WIDTH  + width));
+//        y = Math.max(0, Math.min(y, BOARD_HEIGHT + height));
     }
 
 //    public void act(boolean isVertical) {
@@ -185,24 +229,43 @@ public class Player extends Sprite {
                     break;
         }
         }
+//        updateFrameImage();
     }
 
     /** Stop movement on key release */
     public void keyReleased(KeyEvent e) {
-        switch (e.getKeyCode()) {
-            case KeyEvent.VK_LEFT:
+            if (isVertical) {
+                switch (e.getKeyCode()) {
+                    case KeyEvent.VK_LEFT:
 
-            case KeyEvent.VK_RIGHT:
-                clipNo = 0;
-                dx = 0;
-                break;
-            case KeyEvent.VK_UP:
+                case KeyEvent.VK_RIGHT:
+                    clipNo = 0;
+                    dx = 0;
+                    break;
+                case KeyEvent.VK_UP:
 
-            case KeyEvent.VK_DOWN:
-                clipNo = 0;
-                dy = 0;
-                break;
-        }
+                case KeyEvent.VK_DOWN:
+                    clipNo = 0;
+                    dy = 0;
+                    break;
+            }
+            } else {
+                switch (e.getKeyCode()) {
+                    case KeyEvent.VK_LEFT:
+
+                    case KeyEvent.VK_RIGHT:
+                        clipNo = 4;
+                        dx = 0;
+                        break;
+                    case KeyEvent.VK_UP:
+
+                    case KeyEvent.VK_DOWN:
+                        clipNo = 4;
+                        dy = 0;
+                        break;
+                }
+            }
+//        updateFrameImage();
     }
 
     public int getCurrentSpeedLevel() {

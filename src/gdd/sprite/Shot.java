@@ -9,6 +9,18 @@ public class Shot extends Sprite {
     private static final int H_SPACE = 20;
     private static final int V_SPACE = 1;
 
+    public int clipNo = 0;
+    public final Rectangle[] clips = {
+        new Rectangle(833, 85, 10, 23), // 0: Shot Level 1
+        new Rectangle(834, 148, 10, 13), // 1: Shot Level 2's 1
+        new Rectangle(813, 142, 14, 23), // 2: Shot Level 2's 2
+        new Rectangle(792, 138, 16, 32), // 3: Shot Level 2's 3
+        new Rectangle(908, 86, 18, 17),
+        new Rectangle(926, 86, 39, 18),
+        new Rectangle(965, 80, 57, 22),
+        new Rectangle(708, 138, 16, 32),
+    };
+
     public Shot() {
     }
 
