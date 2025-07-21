@@ -718,15 +718,15 @@ public class Scene1Hor extends JPanel {
                     case 1:
                         if (shots.size() < 4) {
                             // Create a new shot and add it to the list
-                            Shot shot = new Shot(x, y, player.getCurrentShotPower());
+                            Shot shot = new Shot(x, y, player.getCurrentShotPower(), false);
                             shots.add(shot);
                         }//
                         break;
                     case 2:
                         if (shots.size() < 8) {
                             // Create a new shot and add it to the list - FIXED positioning
-                            Shot shot = new Shot(x , y - 10, player.getCurrentShotPower());
-                            Shot shot2 = new Shot(x , y + 10, player.getCurrentShotPower());
+                            Shot shot = new Shot(x , y - 10, player.getCurrentShotPower(), false);
+                            Shot shot2 = new Shot(x , y + 10, player.getCurrentShotPower(), false);
                             shots.add(shot);
                             shots.add(shot2);
                         }//
@@ -734,9 +734,9 @@ public class Scene1Hor extends JPanel {
                     case 3:
                         if (shots.size() < 12) {
                             // Create a new shot and add it to the list
-                            Shot shot = new Shot(x , y, player.getCurrentShotPower());
-                            Shot shot1 = new Shot(x, y - 20, player.getCurrentShotPower());
-                            Shot shot2 = new Shot(x, y+ 20, player.getCurrentShotPower());
+                            Shot shot = new Shot(x , y, player.getCurrentShotPower(), false);
+                            Shot shot1 = new Shot(x, y - 20, player.getCurrentShotPower(), false);
+                            Shot shot2 = new Shot(x, y+ 20, player.getCurrentShotPower(), false);
                             shots.add(shot);
                             shots.add(shot1);
                             shots.add(shot2);
@@ -746,11 +746,11 @@ public class Scene1Hor extends JPanel {
                     case 4:
                         if (shots.size() < 16) {
                             // Create a new shot and add it to the list
-                            Shot shot = new Shot(x , y, player.getCurrentShotPower());
-                            Shot shot1 = new Shot(x, y-15, player.getCurrentShotPower());
-                            Shot shot2 = new Shot(x, y+15, player.getCurrentShotPower());
-                            Shot shot3 = new Shot(x, y + 30, player.getCurrentShotPower());
-                            Shot shot4 = new Shot(x, y - 30, player.getCurrentShotPower());
+                            Shot shot = new Shot(x , y, player.getCurrentShotPower(), false);
+                            Shot shot1 = new Shot(x, y-15, player.getCurrentShotPower(), false);
+                            Shot shot2 = new Shot(x, y+15, player.getCurrentShotPower(), false);
+                            Shot shot3 = new Shot(x, y + 30, player.getCurrentShotPower(), false);
+                            Shot shot4 = new Shot(x, y - 30, player.getCurrentShotPower(), false);
                             shots.add(shot);
                             shots.add(shot1);
                             shots.add(shot2);

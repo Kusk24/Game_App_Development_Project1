@@ -794,15 +794,15 @@ public class Scene1 extends JPanel {
                     case 1:
                         if (shots.size() < 4) {
                             // Create a new shot and add it to the list
-                            Shot shot = new Shot(x - 7, y + 40, player.getCurrentShotPower());
+                            Shot shot = new Shot(x - 7, y + 40, player.getCurrentShotPower(), true);
                             shots.add(shot);
                         }//
                         break;
                     case 2:
                         if (shots.size() < 8) {
                             // Create a new shot and add it to the list
-                            Shot shot = new Shot(x - 14, y + 45, player.getCurrentShotPower());
-                            Shot shot2 = new Shot(x , y + 45, player.getCurrentShotPower());
+                            Shot shot = new Shot(x - 14, y + 45, player.getCurrentShotPower(), true);
+                            Shot shot2 = new Shot(x , y + 45, player.getCurrentShotPower(), true);
                             shots.add(shot);
                             shots.add(shot2);
                         }//
@@ -810,9 +810,9 @@ public class Scene1 extends JPanel {
                     case 3:
                         if (shots.size() < 12) {
                             // Create a new shot and add it to the list
-                            Shot shot = new Shot(x -21, y + 45, player.getCurrentShotPower());
-                            Shot shot1 = new Shot(x - 7, y + 45, player.getCurrentShotPower());
-                            Shot shot2 = new Shot(x + 7, y + 45, player.getCurrentShotPower());
+                            Shot shot = new Shot(x -21, y + 45, player.getCurrentShotPower(), true);
+                            Shot shot1 = new Shot(x - 7, y + 45, player.getCurrentShotPower(), true);
+                            Shot shot2 = new Shot(x + 7, y + 45, player.getCurrentShotPower(), true);
                             shots.add(shot);
                             shots.add(shot1);
                             shots.add(shot2);
@@ -822,9 +822,9 @@ public class Scene1 extends JPanel {
                     case 4:
                         if (shots.size() < 16) {
                             // Create a new shot and add it to the list
-                            Shot shot = new Shot(x - 10 , y + 40, player.getCurrentShotPower());
-                            Shot shot1 = new Shot(x + 40, y + 40 , player.getCurrentShotPower());
-                            Shot shot2 = new Shot(x - 60, y + 40, player.getCurrentShotPower());
+                            Shot shot = new Shot(x - 10 , y + 40, player.getCurrentShotPower(), true);
+                            Shot shot1 = new Shot(x + 40, y + 40 , player.getCurrentShotPower(), true);
+                            Shot shot2 = new Shot(x - 60, y + 40, player.getCurrentShotPower(), true);
                             shots.add(shot);
                             shots.add(shot1);
                             shots.add(shot2);

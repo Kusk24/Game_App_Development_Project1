@@ -44,7 +44,7 @@ public class Shot extends Sprite {
         new Rectangle(676, 301, 19, 16), // 15: H Shot Level 3's 2
         new Rectangle(641, 300, 30, 17), // 16: H Shot Level 3's 3
 
-        new Rectangle(718, 248, 13, 19), // 17: H Shot Level 4's 1
+        new Rectangle(718, 241, 13, 19), // 17: H Shot Level 4's 1
         new Rectangle(735, 232, 17, 37), // 18: H Shot Level 4's 2
         new Rectangle(751, 221, 21, 59), // 19: H Shot Level 4's 3
     };
@@ -57,14 +57,15 @@ public class Shot extends Sprite {
 
     }
 
-    public Shot(int x, int y, int level) {
+    public Shot(int x, int y, int level, boolean isVertical) {
 
-        initShot(x, y, level);
+        initShot(x, y, level, isVertical);
     }
 
-    private void initShot(int x, int y, int level) {
+    private void initShot(int x, int y, int level, boolean isVertical) {
 
 //        var ii = shotLevel(level);
+        setVertical(isVertical);
         setShotLevel(level);
         var ii = new ImageIcon(IMG_SPRITE);
 
