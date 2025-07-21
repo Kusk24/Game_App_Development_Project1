@@ -2,6 +2,8 @@ package gdd.sprite;
 
 import static gdd.Global.*;
 import static gdd.powerup.SpeedUp.MAX_SPEED_LEVEL;
+
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import javax.swing.ImageIcon;
 
@@ -24,6 +26,12 @@ public class Player extends Sprite {
     public Player(int x, int y) {
         initPlayer(x, y);
     }
+
+    public final Rectangle[] clips = {
+        new Rectangle(0, 0, 30, 30), //
+        new Rectangle(0, 0, 30, 30)  // 
+    };
+
 
     private void initPlayer(int x, int y) {
         ImageIcon ii = new ImageIcon(IMG_PLAYER);
