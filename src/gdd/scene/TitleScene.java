@@ -149,7 +149,6 @@ public class TitleScene extends JPanel {
                 game.loadHorizontalScene1();
                 // game.loadScene1();
             }
-
         }
     }
 }
