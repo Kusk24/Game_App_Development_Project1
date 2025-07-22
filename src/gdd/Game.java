@@ -11,11 +11,13 @@ public class Game extends JFrame  {
     TitleScene titleScene;
     Scene1 scene1;
     Scene2 scene2;
+    Scene1Hor scene1Hor;
 
     public Game() {
         titleScene = new TitleScene(this);
         scene1 = new Scene1(this);
         scene2 = new Scene2(this);
+        scene1Hor = new Scene1Hor(this);
         initUI();
          loadTitle();
 //        loadScene2();
@@ -46,6 +48,15 @@ public class Game extends JFrame  {
         add(scene1);
         titleScene.stop();
         scene1.start();
+        revalidate();
+        repaint();
+    }
+
+        public void loadHorizontalScene1() {
+        getContentPane().removeAll();
+        add(scene1Hor);
+        titleScene.stop();
+        scene1Hor.start();
         revalidate();
         repaint();
     }
