@@ -4,6 +4,8 @@ import gdd.AudioPlayer;
 import gdd.Game;
 import gdd.SpawnDetails;
 import gdd.powerup.PowerUp;
+import gdd.powerup.ShotUp;
+import gdd.powerup.SpeedUp;
 import gdd.sprite.*;
 
 import javax.swing.*;
@@ -406,7 +408,24 @@ public class Scene2 extends JPanel {
         player.checkShotReset();
         player.checkSpeedReset();
 
-
+        SpawnDetails sd = spawnMap.get(frame);
+        if (sd != null) {
+            // Create a new enemy based on the spawn details
+            switch (sd.type) {
+                case "PowerUp-SpeedUp":
+                    // Handle speed up item spawn
+                    PowerUp speedUp = new SpeedUp(sd.x, sd.y);
+                    powerups.add(speedUp);
+                    break;
+                case "PowerUp-ShotUp":
+                    PowerUp shotUp = new ShotUp(sd.x, sd.y);
+                    powerups.add(shotUp);
+                    break;
+                default:
+                    System.out.println("Unknown enemy type: " + sd.type);
+                    break;
+            }
+        }
 
         if (boss.getBossLife() == 0) {
             inGame = false;
@@ -432,7 +451,7 @@ public class Scene2 extends JPanel {
         List<PowerUp> powerupsToRemove = new ArrayList<>();
         for (PowerUp powerup : powerups) {
             if (powerup.isVisible()) {
-                powerup.act(); // This already handles the left movement
+                powerup.act(false); // This already handles the left movement
 
                 // Debug output every 30 frames to see powerup positions
                 if (frame % 30 == 0) {

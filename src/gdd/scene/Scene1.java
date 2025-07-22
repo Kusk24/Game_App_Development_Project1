@@ -475,14 +475,31 @@ public class Scene1 extends JPanel {
         player.act();
 
         // Power-ups
+        List<PowerUp> powerupsToRemove = new ArrayList<>();
         for (PowerUp powerup : powerups) {
             if (powerup.isVisible()) {
                 powerup.act(true);
+
+                // Collect powerup if collided with player
                 if (powerup.collidesWith(player)) {
                     powerup.upgrade(player);
+                    powerup.die(); // Mark it as dead/invisible
+                    powerupsToRemove.add(powerup);
+                    continue; // No need to check further for this powerup
                 }
+
+                // Remove if off bottom of screen
+                if (powerup.getY() > BOARD_HEIGHT + 50) {
+                    powerup.die();
+                    powerupsToRemove.add(powerup);
+                    continue;
+                }
+            } else {
+                // Remove invisible/dead powerups
+                powerupsToRemove.add(powerup);
             }
         }
+        powerups.removeAll(powerupsToRemove);
 
         // Check boundaries for Alien2 horizontal movement (similar to Scene1Hor's
         // vertical logic)
@@ -543,16 +560,6 @@ public class Scene1 extends JPanel {
             }
         }
         enemies.removeAll(enemiesToRemove);
-
-        // Remove powerups that have moved off the bottom of the screen
-        List<PowerUp> powerupsToRemove = new ArrayList<>();
-        for (PowerUp powerup : powerups) {
-            if (powerup.getY() > BOARD_HEIGHT + 50) {
-                powerup.die();
-                powerupsToRemove.add(powerup);
-            }
-        }
-        powerups.removeAll(powerupsToRemove);
 
         // shot
         List<Shot> shotsToRemove = new ArrayList<>();
