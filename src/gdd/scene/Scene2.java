@@ -133,6 +133,7 @@ public class Scene2 extends JPanel {
         shots = new ArrayList<>();
         player = new Player(START_X, START_Y); // Initialize player at starting position
         player.setVertical(false);
+        player.clipNo = 4;
         powerups= new ArrayList<>();
         bossBombs = new ArrayList<>();
         boss = new Boss(BOARD_WIDTH - 300, BOARD_HEIGHT/2 - 200); // Create boss instance
@@ -170,9 +171,38 @@ public class Scene2 extends JPanel {
 
 
     private void drawPlayer(Graphics g){
-        if (player.isVisible()) {
+//        if (player.isVisible()) {
+//
+//            g.drawImage(player.getImage(), player.getX(), player.getY(), this);
+//        }
+//
+//        if (player.isDying()) {
+//
+//            player.die();
+//            inGame = false;
+//        }
+        if (player != null && player.isVisible()) {
+            Rectangle clip = player.clips[player.clipNo];
+            int s = 1;  // same factor you used when you scaled the image
 
-            g.drawImage(player.getImage(), player.getX(), player.getY(), this);
+            // compute source coords on the scaled image
+            int sx1 = clip.x * s;
+            int sy1 = clip.y * s;
+            int sx2 = sx1 + clip.width * s;
+            int sy2 = sy1 + clip.height * s;
+
+            // compute destination rectangle on screen
+            int dx1 = player.getX();
+            int dy1 = player.getY();
+            int dx2 = dx1 + clip.width * s;
+            int dy2 = dy1 + clip.height * s;
+
+            g.drawImage(
+                    player.getImage(),
+                    dx1, dy1, dx2, dy2,   // where on the screen
+                    sx1, sy1, sx2, sy2,   // which part of the (already scaled) sheet
+                    this
+            );
         }
 
         if (player.isDying()) {
@@ -186,7 +216,33 @@ public class Scene2 extends JPanel {
         for (Shot shot : shots) {
 
             if (shot.isVisible()) {
-                g.drawImage(shot.getImage(), shot.getX(), shot.getY(), this);
+//                g.drawImage(shot.getImage(), shot.getX(), shot.getY(), this);
+                Rectangle clip = shot.clips[shot.clipNo];
+                int s = 1;  // same factor you used when you scaled the image
+
+                // compute source coords on the scaled image
+                int sx1 = clip.x * s;
+                int sy1 = clip.y * s;
+                int sx2 = sx1 + clip.width * s;
+                int sy2 = sy1 + clip.height * s;
+
+                // compute destination rectangle on screen
+                int dx1 = shot.getX();
+                int dy1 = shot.getY();
+                if (shot.clipNo == 8){
+                    dx1 -= 10;
+                }else if (shot.clipNo == 9){
+                    dx1 -= 20;
+                }
+                int dx2 = dx1 + clip.width * s;
+                int dy2 = dy1 + clip.height * s;
+
+                g.drawImage(
+                        shot.getImage(),
+                        dx1, dy1, dx2, dy2,   // where on the screen
+                        sx1, sy1, sx2, sy2,   // which part of the (already scaled) sheet
+                        this
+                );
             }
         }
     }
@@ -485,6 +541,17 @@ public class Scene2 extends JPanel {
                 int shotX = shot.getX();
                 int shotY = shot.getY();
 
+                if (shot.clipNo != 0 && shot.clipNo != 9 && shot.clipNo != 10 && shot.clipNo != 19) { // Changed condition to always animate
+                    // Animate shots based on distance from player or frame timing
+                    if (shotX > player.getX() + 100 && shot.clipNo == shot.baseClip) {
+                        shot.clipNo += 1;
+                    }
+
+                    if (shotX > player.getX() + 300 && shot.clipNo == shot.baseClip + 1) {
+                        shot.clipNo += 1;
+                    }
+                }
+
                 int bossX = boss.getX();
                 int bossY = boss.getY();
                 // Check if shot collides with boss
@@ -576,15 +643,18 @@ public class Scene2 extends JPanel {
                     case 1:
                         if (shots.size() < 4) {
                             // Create a new shot and add it to the list
-                            Shot shot = new Shot(x, y, player.getCurrentShotPower());
+                            Shot shot = new Shot(x - 10, y + 20, player.getCurrentShotPower(), false);
+//                            shot.setVertical(false);
                             shots.add(shot);
                         }//
                         break;
                     case 2:
                         if (shots.size() < 8) {
                             // Create a new shot and add it to the list - FIXED positioning
-                            Shot shot = new Shot(x , y - 10, player.getCurrentShotPower());
-                            Shot shot2 = new Shot(x , y + 10, player.getCurrentShotPower());
+                            Shot shot = new Shot(x - 10, y + 30, player.getCurrentShotPower(), false);
+                            Shot shot2 = new Shot(x - 10, y + 10, player.getCurrentShotPower(), false);
+//                            shot.setVertical(false);
+//                            shot2.setVertical(false);
                             shots.add(shot);
                             shots.add(shot2);
                         }//
@@ -592,9 +662,12 @@ public class Scene2 extends JPanel {
                     case 3:
                         if (shots.size() < 12) {
                             // Create a new shot and add it to the list
-                            Shot shot = new Shot(x , y, player.getCurrentShotPower());
-                            Shot shot1 = new Shot(x, y - 20, player.getCurrentShotPower());
-                            Shot shot2 = new Shot(x, y+ 20, player.getCurrentShotPower());
+                            Shot shot = new Shot(x - 10, y + 10, player.getCurrentShotPower(), false);
+                            Shot shot1 = new Shot(x - 10, y - 10, player.getCurrentShotPower(), false);
+                            Shot shot2 = new Shot(x - 10, y+ 30, player.getCurrentShotPower(), false);
+//                            shot.setVertical(false);
+//                            shot1.setVertical(false);
+//                            shot2.setVertical(false);
                             shots.add(shot);
                             shots.add(shot1);
                             shots.add(shot2);
@@ -604,16 +677,15 @@ public class Scene2 extends JPanel {
                     case 4:
                         if (shots.size() < 16) {
                             // Create a new shot and add it to the list
-                            Shot shot = new Shot(x , y, player.getCurrentShotPower());
-                            Shot shot1 = new Shot(x, y-15, player.getCurrentShotPower());
-                            Shot shot2 = new Shot(x, y+15, player.getCurrentShotPower());
-                            Shot shot3 = new Shot(x, y + 30, player.getCurrentShotPower());
-                            Shot shot4 = new Shot(x, y - 30, player.getCurrentShotPower());
+                            Shot shot = new Shot(x - 10,  y + 10, player.getCurrentShotPower(), false);
+                            Shot shot1 = new Shot(x - 10, y - 40, player.getCurrentShotPower(), false);
+                            Shot shot2 = new Shot(x - 10, y + 60, player.getCurrentShotPower(), false);
+//                            shot.setVertical(false);
+//                            shot1.setVertical(false);
+//                            shot2.setVertical(false);
                             shots.add(shot);
                             shots.add(shot1);
                             shots.add(shot2);
-                            shots.add(shot3);
-                            shots.add(shot4);
                         }//
                         break;
                 }
