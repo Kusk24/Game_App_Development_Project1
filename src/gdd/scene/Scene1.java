@@ -252,15 +252,12 @@ public class Scene1 extends JPanel {
     }
 
     private void drawPlayer(Graphics g) {
-        if (player != null && player.isVisible()) {
-            g.drawImage(
-                    player.getImage(),
-                    player.getX(), player.getY(),
-                    this
-            );
-        }else if (player != null && player.isDying()) {
+        if (player != null && player.isDying()) {
             player.die();
             inGame = false;
+        }
+        else if (player != null && player.isVisible()) {
+            g.drawImage(player.getImage(), player.getX(), player.getY(), this);
         }
     }
 
@@ -520,74 +517,47 @@ public class Scene1 extends JPanel {
 
                 int shotX = shot.getX();
                 int shotY = shot.getY();
-                if (shot.clipNo != 0 && shot.clipNo != 9 && shot.clipNo != 10 && shot.clipNo != 19) { // Changed condition to always animate
+                if (shot.clipNo != 0 && shot.clipNo != 9 && shot.clipNo != 10 && shot.clipNo != 19) {
                     // Animate shots based on distance from player or frame timing
                     if (shotY < player.getY() - 50 && shot.clipNo == shot.baseClip) {
                         shot.clipNo += 1;
                     }
-
                     if (shotY < player.getY() - 200 && shot.clipNo == shot.baseClip + 1) {
                         shot.clipNo += 1;
                     }
                 }
-//                    if (shotY < player.getY() - 300) { // Only animate when shot is away from player
-//                        int baseClip = 0;
-//                        int maxAnimationFrames = 0;
-//
-//                        switch (shot.getShotLevel()) {
-//                            case 1 -> {
-//                                baseClip = 0; // V Shot Level 1 (clip 0)
-//                                maxAnimationFrames = 1; // No animation, stays at clip 0
-//                            }
-//                            case 2 -> {
-//                                baseClip = 1; // V Shot Level 2 starts at clip 1
-//                                maxAnimationFrames = 3; // Animates through clips 1, 2, 3
-//                            }
-//                            case 3 -> {
-//                                baseClip = 4; // V Shot Level 3 starts at clip 4
-//                                maxAnimationFrames = 3; // Animates through clips 4, 5, 6
-//                            }
-//                            case 4 -> {
-//                                baseClip = 7; // V Shot Level 4 starts at clip 7
-//                                maxAnimationFrames = 3; // Animates through clips 7, 8, 9
-//                            }
-//                        }
-//
-//                        // Cycle through animation frames
-//                        if (maxAnimationFrames > 1) {
-//                            int animationFrame = (frame / 3) % maxAnimationFrames; // Change every 3 frames
-//                            shot.clipNo = (baseClip + animationFrame);
-//                        } else {
-//                            shot.clipNo = (baseClip); // No animation for level 1
-//                        }
-//                    }
-
 
                 for (Enemy enemy : enemies) {
-                    // Collision detection: shot and enemy
-                    int enemyX = enemy.getX();
-                    int enemyY = enemy.getY();
+                    if (!enemy.isVisible()) continue;
 
-                    if (enemy.isVisible() && shot.isVisible()
-                            && shotX >= (enemyX)
-                            && shotX <= (enemyX + ALIEN_WIDTH)
-                            && shotY >= (enemyY)
-                            && shotY <= (enemyY + ALIEN_HEIGHT)) {
+                    // build full‐sprite bounding boxes
+                    Rectangle shotRect = new Rectangle(
+                            shotX,
+                            shotY,
+                            shot.getImage().getWidth(null),
+                            shot.getImage().getHeight(null)
+                    );
+                    Rectangle enemyRect = new Rectangle(
+                            enemy.getX(),
+                            enemy.getY(),
+                            enemy.getImage().getWidth(null),
+                            enemy.getImage().getHeight(null)
+                    );
 
+                    if (shotRect.intersects(enemyRect)) {
                         var ii = new ImageIcon(IMG_EXPLOSION);
                         enemy.setImage(ii.getImage());
                         enemy.setDying(true);
-                        explosions.add(new Explosion(enemyX, enemyY));
+                        explosions.add(new Explosion(enemy.getX(), enemy.getY()));
                         deaths++;
                         shot.die();
                         shotsToRemove.add(shot);
+                        break;  // stop checking this shot against further enemies
                     }
                 }
 
                 // Keep vertical movement for Scene1Ver (original version)
-                int y = shot.getY();
-                y -= 20;
-
+                int y = shot.getY() - 20;
                 if (y < 0) {
                     shot.die();
                     shotsToRemove.add(shot);

@@ -117,7 +117,7 @@ public class Scene2 extends JPanel {
         timer.start();
 
         gameInit();
-//        initAudio();
+        initAudio();
     }
 
     public void stop() {
@@ -158,15 +158,12 @@ public class Scene2 extends JPanel {
 
 
     private void drawPlayer(Graphics g){
-        if (player != null && player.isVisible()) {
-            g.drawImage(
-                    player.getImage(),
-                    player.getX(), player.getY(),
-                    this
-            );
-        }else if (player != null && player.isDying()) {
+        if (player != null && player.isDying()) {
             player.die();
             inGame = false;
+        }
+        else if (player != null && player.isVisible()) {
+            g.drawImage(player.getImage(), player.getX(), player.getY(), this);
         }
     }
 
@@ -214,7 +211,6 @@ public class Scene2 extends JPanel {
             }
 
             if (p.isDying()) {
-
                 p.die();
             }
         }
@@ -280,13 +276,14 @@ public class Scene2 extends JPanel {
     }
 
     private void gameOver(Graphics g) {
+
         g.setColor(Color.black);
         g.fillRect(0, 0, BOARD_WIDTH, BOARD_HEIGHT);
 
         g.setColor(new Color(0, 32, 48));
-        g.fillRect(50, BOARD_WIDTH / 2 - 30, BOARD_WIDTH + 5000, 50);
+        g.fillRect(50, BOARD_WIDTH / 2 - 30, BOARD_WIDTH - 100, 50);
         g.setColor(Color.white);
-        g.drawRect(50, BOARD_WIDTH / 2 - 30, BOARD_WIDTH + 5000, 50);
+        g.drawRect(50, BOARD_WIDTH / 2 - 30, BOARD_WIDTH - 100, 50);
 
         var small = new Font("Helvetica", Font.BOLD, 14);
         var fontMetrics = this.getFontMetrics(small);
@@ -296,6 +293,7 @@ public class Scene2 extends JPanel {
         g.drawString(message, (BOARD_WIDTH - fontMetrics.stringWidth(message)) / 2,
                 BOARD_WIDTH / 2);
     }
+
 
     private void update(){
 
@@ -409,24 +407,7 @@ public class Scene2 extends JPanel {
             }
         }
 
-        // advance & cull bombs
-//        Iterator<Boss.Bomb> it = bossBombs.iterator();
-//        while (it.hasNext()) {
-//            Boss.Bomb b = it.next();
-//            b.act();  // uses its dx,dy now
-//            // remove if off-screen or destroyed
-//            if (b.isDestroyed() || b.getX() < -100 || b.getY() < -100
-//                    || b.getY() > BOARD_HEIGHT + 100) {
-//                it.remove();
-//            }
-//            // collision with player?
-//            if (b.collidesWith(player)) {
-////                player.die();
-////                inGame = false;
-////                timer.stop();
-//            }
-//        }
-
+        List<Boss.Bomb> bombToRemove = new ArrayList<>();
         for (Boss.Bomb bomb : bossBombs) {
             if (!bomb.isDestroyed()) {
                 bomb.act();  // Update bomb position
@@ -436,16 +417,22 @@ public class Scene2 extends JPanel {
                 }
             }
 
-            int bombX = bomb.getX();
-            int bombY = bomb.getY();
-            int playerX = player.getX();
-            int playerY = player.getY();
+            BufferedImage bombImg = boss.getClipImage(bomb.getClipNo());
+            int bw = bombImg.getWidth();
+            int bh = bombImg.getHeight();
 
-            if (player.isVisible() && !bomb.isDestroyed()
-            && bombX >= (playerX)
-            && bombX <= (playerX+ PLAYER_WIDTH)
-            && bombY >= (playerY)
-            && bombY <= (playerY + PLAYER_HEIGHT)) {
+            // build rectangles
+            Rectangle bombRect   = new Rectangle(bomb.getX(), bomb.getY(), bw, bh);
+            Rectangle playerRect = new Rectangle(
+                    player.getX(),
+                    player.getY(),
+                    PLAYER_WIDTH,    // make sure these match your drawn player sprite size!
+                    PLAYER_HEIGHT
+            );
+
+            if (player.isVisible()
+                    && !bomb.isDestroyed()
+                    && bombRect.intersects(playerRect)) {
                 // Check for collisions with player
                 var ii = new ImageIcon(IMG_EXPLOSION);
                 player.setImage(ii.getImage());
@@ -453,6 +440,7 @@ public class Scene2 extends JPanel {
                 bomb.setDestroyed(true);
             }
         }
+        bossBombs.removeAll(bombToRemove);
 
 
         List<Shot> shotsToRemove = new ArrayList<>();
@@ -489,27 +477,6 @@ public class Scene2 extends JPanel {
                     shot.die();
                     shotsToRemove.add(shot);
                 }
-
-//                for (Enemy enemy : enemies) {
-//                    // Collision detection: shot and enemy
-//                    int enemyX = enemy.getX();
-//                    int enemyY = enemy.getY();
-//
-//                    if (enemy.isVisible() && shot.isVisible()
-//                            && shotX >= (enemyX)
-//                            && shotX <= (enemyX + ALIEN_WIDTH)
-//                            && shotY >= (enemyY)
-//                            && shotY <= (enemyY + ALIEN_HEIGHT)) {
-//
-//                        var ii = new ImageIcon(IMG_EXPLOSION);
-//                        enemy.setImage(ii.getImage());
-//                        enemy.setDying(true);
-//                        explosions.add(new Explosion(enemyX, enemyY));
-//                        deaths++;
-//                        shot.die();
-//                        shotsToRemove.add(shot);
-//                    }
-//                }
 
                 // Move shot horizontally to the right instead of vertically
                 int x = shot.getX();
@@ -574,8 +541,6 @@ public class Scene2 extends JPanel {
                             // Create a new shot and add it to the list - FIXED positioning
                             Shot shot = new Shot(x - 10, y + 30, player.getCurrentShotPower(), false);
                             Shot shot2 = new Shot(x - 10, y + 10, player.getCurrentShotPower(), false);
-//                            shot.setVertical(false);
-//                            shot2.setVertical(false);
                             shots.add(shot);
                             shots.add(shot2);
                         }//
@@ -586,9 +551,6 @@ public class Scene2 extends JPanel {
                             Shot shot = new Shot(x - 10, y + 10, player.getCurrentShotPower(), false);
                             Shot shot1 = new Shot(x - 10, y - 10, player.getCurrentShotPower(), false);
                             Shot shot2 = new Shot(x - 10, y+ 30, player.getCurrentShotPower(), false);
-//                            shot.setVertical(false);
-//                            shot1.setVertical(false);
-//                            shot2.setVertical(false);
                             shots.add(shot);
                             shots.add(shot1);
                             shots.add(shot2);
@@ -601,9 +563,6 @@ public class Scene2 extends JPanel {
                             Shot shot = new Shot(x - 10,  y + 10, player.getCurrentShotPower(), false);
                             Shot shot1 = new Shot(x - 10, y - 40, player.getCurrentShotPower(), false);
                             Shot shot2 = new Shot(x - 10, y + 60, player.getCurrentShotPower(), false);
-//                            shot.setVertical(false);
-//                            shot1.setVertical(false);
-//                            shot2.setVertical(false);
                             shots.add(shot);
                             shots.add(shot1);
                             shots.add(shot2);
