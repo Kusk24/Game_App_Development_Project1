@@ -484,11 +484,13 @@ public class Scene1 extends JPanel {
                 // Different movement patterns for different alien types
                 if (enemy instanceof Alien1) {
                     ((Alien1) enemy).setAlienFrame(((Alien1) enemy).getAlienFrame() + 1);
-                    ((Alien1) enemy).act();
+                    (enemy).act();
                     // Alien1: Simple straight down movement
                     enemy.setY(enemy.getY() + 2); // Fixed downward speed
                 } else if (enemy instanceof Alien2) {
                     // Alien2: Moves down + bounces horizontally between boundaries
+                    ((Alien2) enemy).setAlienFrame(((Alien2) enemy).getAlienFrame() + 1);
+                    (enemy).act();
                     enemy.setY(enemy.getY() + 2); // Move down at same speed as Alien1
                     enemy.setX(enemy.getX() + direction); // Move horizontally based on boundary direction
                 } else {

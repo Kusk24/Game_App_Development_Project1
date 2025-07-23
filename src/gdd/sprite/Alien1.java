@@ -76,11 +76,13 @@ public class Alien1 extends Enemy {
     public void act(int direction) {
         // Movement is handled by Scene1 for better control
         // This method can be used for any specific Alien1 behavior
-        if (alienFrame > 30) {
-            if (clipNo > 7) {
+        if (alienFrame > 15) {
+            if (clipNo == 7) {
+                alienFrame = 0; // Reset alienFrame to loop through the frames
                 clipNo = 0; // Reset clipNo to loop through the clips
             } else {
                 clipNo++;
+                alienFrame = 0;
             }
         }
     }
