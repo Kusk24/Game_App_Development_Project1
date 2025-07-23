@@ -1,10 +1,9 @@
 package gdd.sprite;
 
-import javax.swing.*;
+import static gdd.Global.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-
-import static gdd.Global.*;
+import javax.swing.*;
 
 public class Boss extends Enemy{
 
@@ -22,7 +21,8 @@ public class Boss extends Enemy{
     private static final int ACT_SHOOT = 1;
     private static final int ACT_DYING = 2;
     private int action = ACT_FLYING;
-    private int bossLife = 500;
+    private final int bossMaxLife = 100;
+    private int bossLife = bossMaxLife;
     private int frame = 0;
 
     //Bomb Related
@@ -81,6 +81,9 @@ public class Boss extends Enemy{
         setImage(clipImages[0]);
     }
 
+    public int getBossMaxLife() {
+        return bossMaxLife;
+    }
 
     public int getBossFrame() {
         return frame;

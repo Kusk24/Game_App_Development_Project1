@@ -2,14 +2,14 @@ package gdd.scene;
 
 import gdd.AudioPlayer;
 import gdd.Game;
+import static gdd.Global.*;
 import gdd.SpawnDetails;
 import gdd.powerup.PowerUp;
 import gdd.powerup.ShotUp;
 import gdd.powerup.SpeedUp;
 import gdd.sprite.*;
-
-import javax.swing.*;
-import javax.swing.Timer;
+import static gdd.sprite.Player.START_X;
+import static gdd.sprite.Player.START_Y;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -18,10 +18,8 @@ import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.util.*;
 import java.util.List;
-
-import static gdd.Global.*;
-import static gdd.sprite.Player.START_X;
-import static gdd.sprite.Player.START_Y;
+import javax.swing.*;
+import javax.swing.Timer;
 
 public class Scene2 extends JPanel {
 
@@ -50,40 +48,40 @@ public class Scene2 extends JPanel {
 
     public Scene2(Game game) {
         this.game = game;
-        loadSpawnDetails();  // Add this line that was missing
+        loadSpawnDetails(); // Add this line that was missing
     }
 
     private static final int NORMAL_INTERVAL = 50;
-    private static final double NORMAL_SPEED   = 6.0;
+    private static final double NORMAL_SPEED = 6.0;
 
     private void spawnNormalBombs() {
         double centerX = boss.getX();
-        double centerY = boss.getY() + boss.clips[0].height/2.0;
+        double centerY = boss.getY() + boss.clips[0].height / 2.0;
         for (int i = 0; i < 8; i++) {
-            double angle = i * Math.PI/4;  // 0°,45°,90°…315°
-            double dx    = Math.cos(angle) * NORMAL_SPEED;
-            double dy    = Math.sin(angle) * NORMAL_SPEED;
-            Boss.Bomb b   = boss.new Bomb((int)centerX, (int)centerY);
+            double angle = i * Math.PI / 4; // 0°,45°,90°…315°
+            double dx = Math.cos(angle) * NORMAL_SPEED;
+            double dy = Math.sin(angle) * NORMAL_SPEED;
+            Boss.Bomb b = boss.new Bomb((int) centerX, (int) centerY);
             b.setVelocity(dx, dy);
-            b.setClipNo(4);               // use clips[4] for normal bullets
+            b.setClipNo(4); // use clips[4] for normal bullets
             b.setDestroyed(false);
             bossBombs.add(b);
         }
     }
 
     private static final int POWER_INTERVAL = 400;
-    private static final double POWER_SPEED   = 8.0;
+    private static final double POWER_SPEED = 8.0;
 
     private void spawnPowerBombs() {
         double cx = boss.getX();
-        double cy = boss.getY() + boss.clips[0].height/2.0;
+        double cy = boss.getY() + boss.clips[0].height / 2.0;
         for (int i = 0; i < 4; i++) {
-            double angle = i * (Math.PI/2); // four directions
-            double dx    = Math.cos(angle) * POWER_SPEED;
-            double dy    = Math.sin(angle) * POWER_SPEED;
-            Boss.Bomb b   = boss.new Bomb((int)cx, (int)cy);
+            double angle = i * (Math.PI / 2); // four directions
+            double dx = Math.cos(angle) * POWER_SPEED;
+            double dy = Math.sin(angle) * POWER_SPEED;
+            Boss.Bomb b = boss.new Bomb((int) cx, (int) cy);
             b.setVelocity(dx, dy);
-            b.setClipNo( Math.random() < 0.5 ? 6 : 7 ); // clips[6] or [7]
+            b.setClipNo(Math.random() < 0.5 ? 6 : 7); // clips[6] or [7]
             b.setDestroyed(false);
             bossBombs.add(b);
         }
@@ -99,15 +97,16 @@ public class Scene2 extends JPanel {
         }
     }
 
-    private void loadSpawnDetails(){
-//        spawnMap.put(50,  new SpawnDetails("PowerUp-SpeedUp", BOARD_WIDTH - 200, BOARD_HEIGHT/2));
+    private void loadSpawnDetails() {
+        // spawnMap.put(50, new SpawnDetails("PowerUp-SpeedUp", BOARD_WIDTH - 200,
+        // BOARD_HEIGHT/2));
     }
 
-    private void initBoard(){
+    private void initBoard() {
 
     }
 
-    public void start(){
+    public void start() {
         addKeyListener(new Scene2.TAdapter());
         setFocusable(true);
         requestFocusInWindow();
@@ -137,12 +136,12 @@ public class Scene2 extends JPanel {
         player = new Player(START_X, START_Y); // Initialize player at starting position
         player.setVertical(false);
         player.clipNo = 4;
-        powerups= new ArrayList<>();
+        powerups = new ArrayList<>();
         bossBombs = new ArrayList<>();
-        boss = new Boss(BOARD_WIDTH - 300, BOARD_HEIGHT/2 - 200); // Create boss instance
+        boss = new Boss(BOARD_WIDTH - 300, BOARD_HEIGHT / 2 - 200); // Create boss instance
     }
 
-    private void drawMap(Graphics g){
+    private void drawMap(Graphics g) {
 
     }
 
@@ -151,23 +150,20 @@ public class Scene2 extends JPanel {
             g.drawImage(
                     boss.getImage(),
                     boss.getX(), boss.getY(),
-                    this
-            );
+                    this);
         }
     }
 
-
-    private void drawPlayer(Graphics g){
+    private void drawPlayer(Graphics g) {
         if (player != null && player.isDying()) {
             player.die();
             inGame = false;
-        }
-        else if (player != null && player.isVisible()) {
+        } else if (player != null && player.isVisible()) {
             g.drawImage(player.getImage(), player.getX(), player.getY(), this);
         }
     }
 
-    private void drawShot(Graphics g){
+    private void drawShot(Graphics g) {
         for (Shot shot : shots) {
 
             if (shot.isVisible()) {
@@ -176,7 +172,7 @@ public class Scene2 extends JPanel {
         }
     }
 
-    private void drawExplosions(Graphics g){
+    private void drawExplosions(Graphics g) {
         List<Explosion> toRemove = new ArrayList<>();
 
         for (Explosion explosion : explosions) {
@@ -207,7 +203,8 @@ public class Scene2 extends JPanel {
             if (p.isVisible()) {
                 g.drawImage(p.getImage(), p.getX(), p.getY(), this);
                 // Debug: Uncomment to see when powerups are being drawn
-                // System.out.println("Drawing PowerUp at (" + p.getX() + ", " + p.getY() + ")");
+                // System.out.println("Drawing PowerUp at (" + p.getX() + ", " + p.getY() +
+                // ")");
             }
 
             if (p.isDying()) {
@@ -222,9 +219,8 @@ public class Scene2 extends JPanel {
             BufferedImage img = boss.getClipImage(b.getClipNo());
             g.drawImage(
                     img,
-                    b.getX(), b.getY(),      // dest x,y
-                    this
-            );
+                    b.getX(), b.getY(), // dest x,y
+                    this);
         }
     }
 
@@ -234,20 +230,53 @@ public class Scene2 extends JPanel {
 
         g.setColor(Color.white);
         g.drawString("FRAME: " + frame, BOARD_WIDTH - 250, 10);
-        g.drawString("Score :" + (500 - boss.getBossLife()) * 10 , BOARD_WIDTH - 250, 25);
-        //Speed
+        g.drawString("Score :" + (500 - boss.getBossLife()) * 10, BOARD_WIDTH - 250, 25);
+
+        // Draw boss health bar
+        int maxHealth = boss.getBossMaxLife();
+        int currentHealth = boss.getBossLife();
+
+        int barX = 50;
+        int barY = 10;
+        int barWidth = (int) ((BOARD_WIDTH - 100) * 2.0 / 3.0);
+        int barHeight = 10;
+
+        int arcWidth = 8; // small rounding, tweak between 4-12 to get the look you want
+        int arcHeight = 8;
+
+        // background of bar
+        g.setColor(Color.darkGray);
+        g.fillRoundRect(barX, barY, barWidth, barHeight, arcWidth, arcHeight);
+
+        // health proportion
+        double healthPercent = (double) currentHealth / maxHealth;
+        int healthWidth = (int) (barWidth * healthPercent);
+
+        // foreground of bar
+        g.setColor(Color.red);
+        g.fillRoundRect(barX, barY, healthWidth, barHeight, arcWidth, arcHeight);
+
+        // optional border
+        g.setColor(Color.GRAY);
+        g.drawRoundRect(barX, barY, barWidth, barHeight, arcWidth, arcHeight);
+
+        // Speed
         if (player.getCurrentSpeedLevel() == 4) {
-            g.drawString("Speed Upgraded: Max Level " + player.getCurrentSpeedLevel()+ " ("+ player.getLastSpeedUpCountDown() +")", BOARD_WIDTH - 250, 40);
+            g.drawString("Speed Upgraded: Max Level " + player.getCurrentSpeedLevel() + " ("
+                    + player.getLastSpeedUpCountDown() + ")", BOARD_WIDTH - 250, 40);
         } else if (player.getCurrentSpeedLevel() >= 2 && player.getCurrentSpeedLevel() <= 3) {
-            g.drawString("Speed Upgraded: Level " + player.getCurrentSpeedLevel()+ " ("+ player.getLastSpeedUpCountDown() +")", BOARD_WIDTH - 250, 40);
+            g.drawString("Speed Upgraded: Level " + player.getCurrentSpeedLevel() + " ("
+                    + player.getLastSpeedUpCountDown() + ")", BOARD_WIDTH - 250, 40);
         } else {
             g.drawString("Speed: Base Level " + player.getCurrentSpeedLevel(), BOARD_WIDTH - 250, 40);
         }
-        //Shot Power
+        // Shot Power
         if (player.getCurrentShotPower() == 4) {
-            g.drawString("Shot Upgraded: Max Level " + player.getCurrentShotPower()+ " ("+ player.getLastShotUpCountDown() +")", BOARD_WIDTH - 250, 55);
+            g.drawString("Shot Upgraded: Max Level " + player.getCurrentShotPower() + " ("
+                    + player.getLastShotUpCountDown() + ")", BOARD_WIDTH - 250, 55);
         } else if (player.getCurrentShotPower() >= 2 && player.getCurrentShotPower() <= 3) {
-            g.drawString("Shot Upgraded: Level " + player.getCurrentShotPower() + " ("+ player.getLastShotUpCountDown()+")", BOARD_WIDTH - 250, 55);
+            g.drawString("Shot Upgraded: Level " + player.getCurrentShotPower() + " (" + player.getLastShotUpCountDown()
+                    + ")", BOARD_WIDTH - 250, 55);
         } else {
             g.drawString("Shot: Base Level " + player.getCurrentShotPower(), BOARD_WIDTH - 250, 55);
         }
@@ -255,7 +284,7 @@ public class Scene2 extends JPanel {
 
         if (inGame) {
 
-            drawMap(g);  // Draw background stars first
+            drawMap(g); // Draw background stars first
             drawExplosions(g);
             drawPowerUps(g);
             drawBoss(g);
@@ -294,8 +323,7 @@ public class Scene2 extends JPanel {
                 BOARD_WIDTH / 2);
     }
 
-
-    private void update(){
+    private void update() {
 
         player.checkShotReset();
         player.checkSpeedReset();
@@ -331,17 +359,17 @@ public class Scene2 extends JPanel {
 
         if (boss.getY() > BOARD_HEIGHT - boss.clips[boss.clipNo].height * SCALE_FACTOR) {
             direction = -1; // Move down
-        } else if (boss.getY() < 0 ) {
+        } else if (boss.getY() < 0) {
             direction = 1;
         }
 
-        if (player.isVisible()){
+        if (player.isVisible()) {
             player.act(false);
             player.setPlayerFrame(player.getPlayerFrame() + 1);
         }
-//        if (boss.getBossFrame() > 15) {
-//            boss.setAction(0);
-//        }
+        // if (boss.getBossFrame() > 15) {
+        // boss.setAction(0);
+        // }
 
         List<PowerUp> powerupsToRemove = new ArrayList<>();
         for (PowerUp powerup : powerups) {
@@ -350,7 +378,8 @@ public class Scene2 extends JPanel {
 
                 // Debug output every 30 frames to see powerup positions
                 if (frame % 30 == 0) {
-                    System.out.println("PowerUp at (" + powerup.getX() + ", " + powerup.getY() + ") - Visible: " + powerup.isVisible());
+                    System.out.println("PowerUp at (" + powerup.getX() + ", " + powerup.getY() + ") - Visible: "
+                            + powerup.isVisible());
                 }
 
                 // Remove powerup if it goes off the left edge
@@ -373,25 +402,25 @@ public class Scene2 extends JPanel {
         }
         powerups.removeAll(powerupsToRemove);
 
-        if (boss.getBossLife()%50 == 0 && boss.getBossLife() != 500 && boss.getBossLife() != 0  ) {
+        if (boss.getBossLife() % 50 == 0 && boss.getBossLife() != 500 && boss.getBossLife() != 0) {
             boss.setAction(2);
             boss.setFiring(false);
         }
 
-//        if (frame % 50 == 0 && inGame) {
-//            boolean power = (Math.random() < 0.3);        // 30% chance power shot
-//            boss.fireBomb(power);
-//        }
-//
-//        if (boss.getBomb().isVisible()) {
-//            boss.getBomb().act();
-//            if (boss.getBomb().collidesWith(player)) {
-//                player.die();
-//                inGame = false;
-//                timer.stop();
-//                gameOver(getGraphics());
-//            }
-//        }
+        // if (frame % 50 == 0 && inGame) {
+        // boolean power = (Math.random() < 0.3); // 30% chance power shot
+        // boss.fireBomb(power);
+        // }
+        //
+        // if (boss.getBomb().isVisible()) {
+        // boss.getBomb().act();
+        // if (boss.getBomb().collidesWith(player)) {
+        // player.die();
+        // inGame = false;
+        // timer.stop();
+        // gameOver(getGraphics());
+        // }
+        // }
 
         if (frame % NORMAL_INTERVAL == 0 && inGame) {
             if (boss.isFiring()) {
@@ -410,10 +439,10 @@ public class Scene2 extends JPanel {
         List<Boss.Bomb> bombToRemove = new ArrayList<>();
         for (Boss.Bomb bomb : bossBombs) {
             if (!bomb.isDestroyed()) {
-                bomb.act();  // Update bomb position
+                bomb.act(); // Update bomb position
                 // Check if bomb is off-screen
-                if (bomb.getX() < 0 || bomb.getY() < 0 || bomb.getY() > BOARD_HEIGHT  || bomb.getX() > BOARD_WIDTH) {
-                    bomb.die();  // Mark as not visible
+                if (bomb.getX() < 0 || bomb.getY() < 0 || bomb.getY() > BOARD_HEIGHT || bomb.getX() > BOARD_WIDTH) {
+                    bomb.die(); // Mark as not visible
                 }
             }
 
@@ -422,13 +451,12 @@ public class Scene2 extends JPanel {
             int bh = bombImg.getHeight();
 
             // build rectangles
-            Rectangle bombRect   = new Rectangle(bomb.getX(), bomb.getY(), bw, bh);
+            Rectangle bombRect = new Rectangle(bomb.getX(), bomb.getY(), bw, bh);
             Rectangle playerRect = new Rectangle(
                     player.getX(),
                     player.getY(),
-                    PLAYER_WIDTH,    // make sure these match your drawn player sprite size!
-                    PLAYER_HEIGHT
-            );
+                    PLAYER_WIDTH, // make sure these match your drawn player sprite size!
+                    PLAYER_HEIGHT);
 
             if (player.isVisible()
                     && !bomb.isDestroyed()
@@ -442,7 +470,6 @@ public class Scene2 extends JPanel {
         }
         bossBombs.removeAll(bombToRemove);
 
-
         List<Shot> shotsToRemove = new ArrayList<>();
         for (Shot shot : shots) {
 
@@ -450,7 +477,9 @@ public class Scene2 extends JPanel {
                 int shotX = shot.getX();
                 int shotY = shot.getY();
 
-                if (shot.clipNo != 0 && shot.clipNo != 9 && shot.clipNo != 10 && shot.clipNo != 19) { // Changed condition to always animate
+                if (shot.clipNo != 0 && shot.clipNo != 9 && shot.clipNo != 10 && shot.clipNo != 19) { // Changed
+                                                                                                      // condition to
+                                                                                                      // always animate
                     // Animate shots based on distance from player or frame timing
                     if (shotX > player.getX() + 100 && shot.clipNo == shot.baseClip) {
                         shot.clipNo += 1;
@@ -472,8 +501,8 @@ public class Scene2 extends JPanel {
 
                     // Debug output for collision
                     System.out.println("Shot hit the boss at (" + shotX + ", " + shotY + ")");
-                    explosions.add(new Explosion(  bossX, shotY));
-                    boss.setBossLife(boss.getBossLife() - 1);  // Decrease boss life
+                    explosions.add(new Explosion(bossX, shotY));
+                    boss.setBossLife(boss.getBossLife() - 1); // Decrease boss life
                     shot.die();
                     shotsToRemove.add(shot);
                 }
@@ -494,7 +523,7 @@ public class Scene2 extends JPanel {
         shots.removeAll(shotsToRemove);
     }
 
-    private void doGameCycle(){
+    private void doGameCycle() {
         frame++;
         update();
         repaint();
@@ -532,9 +561,9 @@ public class Scene2 extends JPanel {
                         if (shots.size() < 4) {
                             // Create a new shot and add it to the list
                             Shot shot = new Shot(x - 10, y + 20, player.getCurrentShotPower(), false);
-//                            shot.setVertical(false);
+                            // shot.setVertical(false);
                             shots.add(shot);
-                        }//
+                        } //
                         break;
                     case 2:
                         if (shots.size() < 8) {
@@ -543,14 +572,14 @@ public class Scene2 extends JPanel {
                             Shot shot2 = new Shot(x - 10, y + 10, player.getCurrentShotPower(), false);
                             shots.add(shot);
                             shots.add(shot2);
-                        }//
+                        } //
                         break;
                     case 3:
                         if (shots.size() < 12) {
                             // Create a new shot and add it to the list
                             Shot shot = new Shot(x - 10, y + 10, player.getCurrentShotPower(), false);
                             Shot shot1 = new Shot(x - 10, y - 10, player.getCurrentShotPower(), false);
-                            Shot shot2 = new Shot(x - 10, y+ 30, player.getCurrentShotPower(), false);
+                            Shot shot2 = new Shot(x - 10, y + 30, player.getCurrentShotPower(), false);
                             shots.add(shot);
                             shots.add(shot1);
                             shots.add(shot2);
@@ -560,13 +589,13 @@ public class Scene2 extends JPanel {
                     case 4:
                         if (shots.size() < 16) {
                             // Create a new shot and add it to the list
-                            Shot shot = new Shot(x - 10,  y + 10, player.getCurrentShotPower(), false);
+                            Shot shot = new Shot(x - 10, y + 10, player.getCurrentShotPower(), false);
                             Shot shot1 = new Shot(x - 10, y - 40, player.getCurrentShotPower(), false);
                             Shot shot2 = new Shot(x - 10, y + 60, player.getCurrentShotPower(), false);
                             shots.add(shot);
                             shots.add(shot1);
                             shots.add(shot2);
-                        }//
+                        } //
                         break;
                 }
             }
