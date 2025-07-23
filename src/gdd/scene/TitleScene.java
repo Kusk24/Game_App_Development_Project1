@@ -44,7 +44,7 @@ public class TitleScene extends JPanel {
         timer.start();
 
         initTitle();
-//        initAudio();
+        initAudio();
     }
 
     public void stop() {
@@ -146,7 +146,7 @@ public class TitleScene extends JPanel {
             int key = e.getKeyCode();
             if (key == KeyEvent.VK_SPACE) {
                 // Load the next scene
-                game.loadHorizontalScene1();
+                game.loadScene1();
                 // game.loadScene1();
             }
         }

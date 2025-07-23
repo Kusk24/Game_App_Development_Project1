@@ -33,7 +33,7 @@ public class ShotUp extends PowerUp {
         if (isVertical) {
             this.y += 2; // Move down by 2 pixels each frame
         } else {
-            this.x -= 2; // Move left by 2 pixels each frame
+            this.x -= 4; // Move left by 2 pixels each frame
         }
     }
 }

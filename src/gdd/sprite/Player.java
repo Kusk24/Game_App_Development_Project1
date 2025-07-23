@@ -6,9 +6,6 @@ import static gdd.powerup.SpeedUp.MAX_SPEED_LEVEL;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
 public class Player extends Sprite {
@@ -16,11 +13,12 @@ public class Player extends Sprite {
     public static final int START_X = 10;
     public static final int START_Y = 300;
     private static final long RESET_DURATION_MS = 15_000; // 15 seconds
-    private BufferedImage sheet;
+
+    private BufferedImage[] clipImages;
 
     private int width, height;
     private int currentSpeed = 2;
-    private int originalSpeed = 2;
+    private final int originalSpeed = 2;
     private int currentSpeedLevel = 1;
 
     private long lastSpeedUpTime = 0;
@@ -57,42 +55,35 @@ public class Player extends Sprite {
 
 
     private void initPlayer(int x, int y) {
-        ImageIcon ii = new ImageIcon(IMG_SPRITE);
-//        try {
-//            sheet = ImageIO.read(getClass().getResource(IMG_SPRITE));
-//        } catch (IOException e) {
-//            throw new UncheckedIOException(e);
-//        }
-        var img = ii.getImage()
-                .getScaledInstance(ii.getIconWidth() ,
-                        ii.getIconHeight() ,
-                        java.awt.Image.SCALE_SMOOTH);
-        setImage(img);
-        width  = img.getWidth(null);
-        height = img.getHeight(null);
+        var ii = new ImageIcon(IMG_SPRITE);
+        // we know these immediately:
+        int fullW = ii.getIconWidth();
+        int fullH = ii.getIconHeight();
 
+        // create a buffered image at the right size:
+        BufferedImage fullBuffered = new BufferedImage(fullW, fullH, BufferedImage.TYPE_INT_ARGB);
+
+        // draw & scale the raw icon into it in one go:
+        Graphics2D g2 = fullBuffered.createGraphics();
+        g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+                RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        g2.drawImage(ii.getImage(), 0, 0, fullW, fullH, null);
+        g2.dispose();
+
+        // now slice your clips:
+        clipImages = new BufferedImage[clips.length];
+        for (int i = 0; i < clips.length; i++) {
+            Rectangle r = clips[i];
+            clipImages[i] = fullBuffered.getSubimage(
+                    r.x,
+                    r.y,
+                    r.width,
+                    r.height
+            );
+        }
+        setImage(clipImages[0]);
         setX(x);
         setY(y);
-    }
-
-    public void updateFrameImage() {
-        Rectangle clip = clips[clipNo];
-        // grab just that rectangle
-        BufferedImage frameImg = sheet.getSubimage(
-                clip.x, clip.y,
-                clip.width, clip.height
-        );
-
-        // scale if you need SCALE_FACTOR
-        Image scaled = frameImg.getScaledInstance(
-                clip.width  * SCALE_FACTOR,
-                clip.height * SCALE_FACTOR,
-                Image.SCALE_SMOOTH
-        );
-
-        setImage(scaled);
-        width  = scaled.getWidth(null);
-        height = scaled.getHeight(null);
     }
 
     public int getSpeed() {
@@ -139,54 +130,41 @@ public class Player extends Sprite {
 //        y = Math.max(0, Math.min(y, BOARD_HEIGHT + height));
     }
 
-//    public void act(boolean isVertical) {
-//
-//        if (isVertical) {
-//            // Vertical movement
-//            switch (action) {
-//                case ACT_UP:
-//                    dy = -currentSpeed;
-//                    dx = 0;
-//                    break;
-//                case ACT_LEFT:
-//                    dy = 0;
-//                    dx = -currentSpeed;
-//                    break;
-//                case ACT_RIGHT:
-//                    dy = 0;
-//                    dx = currentSpeed;
-//                    break;
-//                default: // ACT_NORMAL
-//                    dy = 0;
-//                    dx = 0;
-//            }
-//        } else {
-//            // Horizontal movement
-//            switch (action) {
-//                case ACT_UP:
-//                    dx = 0;
-//                    dy = -currentSpeed;
-//                    break;
-//                case ACT_LEFT:
-//                    dx = -currentSpeed;
-//                    dy = 0;
-//                    break;
-//                case ACT_RIGHT:
-//                    dx = currentSpeed;
-//                    dy = 0;
-//                    break;
-//                default: // ACT_NORMAL
-//                    dx = 0;
-//                    dy = 0;
-//            }
-//        }
-//        x += dx;
-//        y += dy;
-//
-//        // keep inside [0 .. BOARD_WIDTH − width], [0 .. BOARD_HEIGHT − height]
+    public void act(boolean isVertical) {
+        if (isVertical) {
+            if (clipNo == 1 && frame > 40){
+                frame = 0;
+                clipNo = 0;
+            } else if (clipNo == 0 && frame > 20) {
+                clipNo = 1;
+            }
+        } else {
+            if (clipNo == 5 && frame > 40){
+                frame = 0;
+                clipNo = 4;
+            } else if (clipNo == 4 && frame > 20) {
+                clipNo = 5;
+            }
+        }
+
+        x += dx;
+        y += dy;
+        // keep inside [0 .. BOARD_WIDTH − width], [0 .. BOARD_HEIGHT − height]
 //        x = Math.max(0, Math.min(x, BOARD_WIDTH  - width));
 //        y = Math.max(0, Math.min(y, BOARD_HEIGHT - height));
-//    }
+
+
+        if (x < 0){
+            x = 0;
+        } else if (x > BOARD_WIDTH - width) {
+            x = BOARD_WIDTH - width;
+        }
+        if (y < 0){
+            y = 0;
+        } else if (y > BOARD_HEIGHT - height) {
+            y = BOARD_HEIGHT - height;
+        }
+    }
 
     /** Handle arrow-key presses */
     public void keyPressed(KeyEvent e) {
@@ -217,7 +195,7 @@ public class Player extends Sprite {
                     break;
                 case KeyEvent.VK_RIGHT:
                     clipNo = 5;
-                    dx =  currentSpeed;
+                    dx = currentSpeed;
                     break;
                 case KeyEvent.VK_UP:
                     clipNo = 6;
@@ -338,5 +316,17 @@ public class Player extends Sprite {
 
     public void setVertical(boolean vertical) {
         isVertical = vertical;
+    }
+
+    @Override
+    public Image getImage() {
+        return clipImages[clipNo];
+    }
+
+    public BufferedImage getClipImage(int idx) {
+        if (idx < 0 || idx >= clipImages.length) {
+            throw new IndexOutOfBoundsException("Invalid clip index: " + idx);
+        }
+        return clipImages[idx];
     }
 }
