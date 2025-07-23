@@ -18,7 +18,7 @@ public class Alien2 extends Enemy {
             new Rectangle(48, 147, 65, 48),
             new Rectangle(112, 147, 65, 48), // Placeholder for Alien1 image clip
             new Rectangle(177, 147, 65, 48),
-            new Rectangle(242, 147, 65, 48)
+            new Rectangle(242, 147, 65, 48),
     };
     private int alienFrame = 0;
 
@@ -100,8 +100,15 @@ public class Alien2 extends Enemy {
 
     public class Bomb extends Enemy.Bomb {
 
-        private int bombClipNo = 0; // Bomb clip number
-
+        private int bombClipNo;
+        private int bombFrame = 0; // Frame counter for bomb animation
+        private BufferedImage[] bombClipImages;
+        private Rectangle[] bombClips = {
+                new Rectangle(5, 37, 13, 35), //12
+                new Rectangle(22, 36, 13, 35),
+                new Rectangle(40, 37, 13, 35),
+                new Rectangle(58, 36, 13, 35) //15
+        };
         private boolean destroyed;
 
         public Bomb(int x, int y) {
@@ -116,9 +123,33 @@ public class Alien2 extends Enemy {
             this.x = x;
             this.y = y;
 
-            var bombImg = "src/images/bomb.png";
-            var ii = new ImageIcon(bombImg);
-            setImage(ii.getImage());
+            var ii = new ImageIcon(IMG_BOMB);
+            // we know these immediately:
+            int fullW = ii.getIconWidth() ;
+            int fullH = ii.getIconHeight() ;
+
+            // create a buffered image at the right size:
+            BufferedImage fullBuffered = new BufferedImage(fullW, fullH, BufferedImage.TYPE_INT_ARGB);
+
+            // draw & scale the raw icon into it in one go:
+            Graphics2D g2 = fullBuffered.createGraphics();
+            g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+                    RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+            g2.drawImage(ii.getImage(), 0, 0, fullW, fullH, null);
+            g2.dispose();
+
+            // now slice your clips:
+            bombClipImages = new BufferedImage[bombClips.length];
+            for (int i = 0; i < bombClips.length; i++) {
+                Rectangle r = bombClips[i];
+                bombClipImages[i] = fullBuffered.getSubimage(
+                        r.x ,
+                        r.y ,
+                        r.width ,
+                        r.height
+                );
+            }
+            setImage(bombClipImages[0]);
         }
 
         public void setDestroyed(boolean destroyed) {
@@ -138,6 +169,16 @@ public class Alien2 extends Enemy {
         public void act() {
             this.x -= 4;// Move the bomb left at a faster speed
 
+            if (bombFrame > 15) {
+                if (bombClipNo == 3) {
+                    bombFrame = 0; // Reset alienFrame to loop through the frames
+                    bombClipNo = 0; // Reset clipNo to loop through the clips
+                } else {
+                    bombClipNo++;
+                    bombFrame = 0;
+                }
+            }
+            bombFrame++;
             if (this.x < 0) {
                 setDestroyed(true);
             }
@@ -146,13 +187,28 @@ public class Alien2 extends Enemy {
         public void act(Boolean isVertical) {
             if (isVertical) {
                 this.y += 3; // Move down if vertical
+                if (bombFrame > 15) {
+                    if (bombClipNo == 3) {
+                        bombFrame = 0; // Reset alienFrame to loop through the frames
+                        bombClipNo = 0; // Reset clipNo to loop through the clips
+                    } else {
+                        bombClipNo++;
+                        bombFrame = 0;
+                    }
+                }
             } else {
                 this.x -= 4; // Move left if not vertical
             }
+            bombFrame++;
 
             if (this.x < 0 || this.y < 0) {
                 setDestroyed(true);
             }
+        }
+
+        @Override
+        public BufferedImage getImage() {
+            return bombClipImages[bombClipNo];
         }
     }
 

@@ -609,7 +609,7 @@ public class Scene1 extends JPanel {
             if (chance == CHANCE && enemy.isVisible() && bomb.isDestroyed()) {
 
                 bomb.setDestroyed(false);
-                bomb.setX(enemy.getX() + (ALIEN_WIDTH) / 2); // Center bomb horizontally on enemy
+                bomb.setX(enemy.getX() + (ALIEN_WIDTH) / 2 + 12); // Center bomb horizontally on enemy
                 bomb.setY(enemy.getY() + (ALIEN_HEIGHT)); // Position bomb just below enemy
             }
 
