@@ -428,6 +428,7 @@ public class Scene2 extends JPanel {
         }
 
         if (boss.getBossLife() == 0) {
+            boss.die();
             inGame = false;
             timer.stop();
             message = "Game won!";
@@ -482,6 +483,7 @@ public class Scene2 extends JPanel {
 
         if (boss.getBossLife()%50 == 0 && boss.getBossLife() != 500 && boss.getBossLife() != 0  ) {
             boss.setAction(2);
+            boss.setFiring(false);
         }
 
 //        if (frame % 50 == 0 && inGame) {
@@ -500,13 +502,17 @@ public class Scene2 extends JPanel {
 //        }
 
         if (frame % NORMAL_INTERVAL == 0 && inGame) {
-            spawnNormalBombs();
+            if (boss.isFiring()) {
+                spawnNormalBombs();
+            }
         }
         // spawn power shots
         if (frame % POWER_INTERVAL == 0 && inGame) {
-            boss.setBossFrame(0);
-            boss.setAction(1);
-            spawnPowerBombs();
+            if (boss.isFiring()) {
+                boss.setBossFrame(0);
+                boss.setAction(1);
+                spawnPowerBombs();
+            }
         }
 
         // advance & cull bombs

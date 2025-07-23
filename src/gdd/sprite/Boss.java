@@ -13,7 +13,7 @@ public class Boss extends Enemy{
 
     private Bomb bomb = new Bomb(START_X, START_Y);
 
-    private boolean isFiring = false;
+    private boolean isFiring = true;
 
     //Boss Related
     private static final int ACT_FLYING = 0;
@@ -78,7 +78,7 @@ public class Boss extends Enemy{
                     frame = 0;
                     clipNo = 0;
                 }
-                if (frame > 40) { // blink
+                if (clipNo == 0 && frame > 40) { // blink
                     frame = 0;
                     clipNo = 1; // blink
                 }
@@ -96,11 +96,12 @@ public class Boss extends Enemy{
 //                }
                 break;
             case ACT_DYING:
-                if (frame > 100) {
+                if (frame > 120) {
                     frame = 0;
                     clipNo = 1;
                     bossLife -= 5;
 //                    setStunned(false);
+                    setFiring(true);
                     setAction( ACT_FLYING);
                 } else {
                     clipNo = 2;
@@ -221,5 +222,13 @@ public class Boss extends Enemy{
                 setDestroyed(true);
             }
         }
+    }
+
+    public void setFiring(boolean isFiring) {
+        this.isFiring = isFiring;
+    }
+
+    public boolean isFiring() {
+        return isFiring;
     }
 }
