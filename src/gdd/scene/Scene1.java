@@ -472,7 +472,10 @@ public class Scene1 extends JPanel {
         }
 
         // player
-        player.act();
+        if (player.isVisible()){
+            player.act(true);
+            player.setPlayerFrame(player.getPlayerFrame() + 1);
+        }
 
         // Power-ups
         List<PowerUp> powerupsToRemove = new ArrayList<>();

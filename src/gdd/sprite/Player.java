@@ -20,7 +20,7 @@ public class Player extends Sprite {
 
     private int width, height;
     private int currentSpeed = 2;
-    private int originalSpeed = 2;
+    private final int originalSpeed = 2;
     private int currentSpeedLevel = 1;
 
     private long lastSpeedUpTime = 0;
@@ -139,54 +139,41 @@ public class Player extends Sprite {
 //        y = Math.max(0, Math.min(y, BOARD_HEIGHT + height));
     }
 
-//    public void act(boolean isVertical) {
-//
-//        if (isVertical) {
-//            // Vertical movement
-//            switch (action) {
-//                case ACT_UP:
-//                    dy = -currentSpeed;
-//                    dx = 0;
-//                    break;
-//                case ACT_LEFT:
-//                    dy = 0;
-//                    dx = -currentSpeed;
-//                    break;
-//                case ACT_RIGHT:
-//                    dy = 0;
-//                    dx = currentSpeed;
-//                    break;
-//                default: // ACT_NORMAL
-//                    dy = 0;
-//                    dx = 0;
-//            }
-//        } else {
-//            // Horizontal movement
-//            switch (action) {
-//                case ACT_UP:
-//                    dx = 0;
-//                    dy = -currentSpeed;
-//                    break;
-//                case ACT_LEFT:
-//                    dx = -currentSpeed;
-//                    dy = 0;
-//                    break;
-//                case ACT_RIGHT:
-//                    dx = currentSpeed;
-//                    dy = 0;
-//                    break;
-//                default: // ACT_NORMAL
-//                    dx = 0;
-//                    dy = 0;
-//            }
-//        }
-//        x += dx;
-//        y += dy;
-//
-//        // keep inside [0 .. BOARD_WIDTH − width], [0 .. BOARD_HEIGHT − height]
+    public void act(boolean isVertical) {
+        if (isVertical) {
+            if (clipNo == 1 && frame > 40){
+                frame = 0;
+                clipNo = 0;
+            } else if (clipNo == 0 && frame > 20) {
+                clipNo = 1;
+            }
+        } else {
+            if (clipNo == 5 && frame > 40){
+                frame = 0;
+                clipNo = 4;
+            } else if (clipNo == 4 && frame > 20) {
+                clipNo = 5;
+            }
+        }
+
+        x += dx;
+        y += dy;
+        // keep inside [0 .. BOARD_WIDTH − width], [0 .. BOARD_HEIGHT − height]
 //        x = Math.max(0, Math.min(x, BOARD_WIDTH  - width));
 //        y = Math.max(0, Math.min(y, BOARD_HEIGHT - height));
-//    }
+
+
+        if (x < 0){
+            x = 0;
+        } else if (x > BOARD_WIDTH - width) {
+            x = BOARD_WIDTH - width;
+        }
+        if (y < 0){
+            y = 0;
+        } else if (y > BOARD_HEIGHT - height) {
+            y = BOARD_HEIGHT - height;
+        }
+    }
 
     /** Handle arrow-key presses */
     public void keyPressed(KeyEvent e) {
@@ -217,7 +204,7 @@ public class Player extends Sprite {
                     break;
                 case KeyEvent.VK_RIGHT:
                     clipNo = 5;
-                    dx =  currentSpeed;
+                    dx = currentSpeed;
                     break;
                 case KeyEvent.VK_UP:
                     clipNo = 6;

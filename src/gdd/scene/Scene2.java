@@ -99,7 +99,7 @@ public class Scene2 extends JPanel {
     }
 
     private void loadSpawnDetails(){
-        spawnMap.put(50,  new SpawnDetails("PowerUp-SpeedUp", BOARD_WIDTH - 200, BOARD_HEIGHT/2));
+//        spawnMap.put(50,  new SpawnDetails("PowerUp-SpeedUp", BOARD_WIDTH - 200, BOARD_HEIGHT/2));
     }
 
     private void initBoard(){
@@ -442,8 +442,10 @@ public class Scene2 extends JPanel {
             direction = 1;
         }
 
-        player.act();
-
+        if (player.isVisible()){
+            player.act(false);
+            player.setPlayerFrame(player.getPlayerFrame() + 1);
+        }
 //        if (boss.getBossFrame() > 15) {
 //            boss.setAction(0);
 //        }
