@@ -2,6 +2,7 @@ package gdd.sprite;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 
 import static gdd.Global.*;
 
@@ -10,6 +11,7 @@ public class Boss extends Enemy{
     private static final int START_X = 100;
     private static final int START_Y = GROUND;
     // private int width;
+    private BufferedImage[] clipImages;
 
     private Bomb bomb = new Bomb(START_X, START_Y);
 
@@ -51,12 +53,32 @@ public class Boss extends Enemy{
         this.y = y;
 
         var ii = new ImageIcon(IMG_BOSS);
+        // we know these immediately:
+        int fullW = ii.getIconWidth() * SCALE_FACTOR;
+        int fullH = ii.getIconHeight() * SCALE_FACTOR;
 
-        // Scale the image to use the global scaling factor
-        var scaledImage = ii.getImage().getScaledInstance(ii.getIconWidth() * SCALE_FACTOR,
-                ii.getIconHeight() * SCALE_FACTOR,
-                Image.SCALE_SMOOTH);
-        setImage(scaledImage);
+        // create a buffered image at the right size:
+        BufferedImage fullBuffered = new BufferedImage(fullW, fullH, BufferedImage.TYPE_INT_ARGB);
+
+        // draw & scale the raw icon into it in one go:
+        Graphics2D g2 = fullBuffered.createGraphics();
+        g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+                RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        g2.drawImage(ii.getImage(), 0, 0, fullW, fullH, null);
+        g2.dispose();
+
+        // now slice your clips:
+        clipImages = new BufferedImage[clips.length];
+        for (int i = 0; i < clips.length; i++) {
+            Rectangle r = clips[i];
+            clipImages[i] = fullBuffered.getSubimage(
+                    r.x * SCALE_FACTOR,
+                    r.y * SCALE_FACTOR,
+                    r.width * SCALE_FACTOR,
+                    r.height * SCALE_FACTOR
+            );
+        }
+        setImage(clipImages[0]);
     }
 
 
@@ -127,27 +149,6 @@ public class Boss extends Enemy{
         this.bossLife = bossLife;
     }
 
-//    public void fireBomb(boolean power) {
-//        bombAction = power ? BOMB_POWER : BOMB_NORMAL;
-//
-//        if (power) {
-//            // randomize between clip 6 and 7
-//            bombClipNo = (Math.random() < 0.5 ? 6 : 7);
-//        } else {
-//            // three-way spread: center, up, down
-//            bombClipNo = switch ((int)(Math.random()*3)) {
-//                case 0 -> 4; // center
-//                case 1 -> 5; // one of your two small shots
-//                default -> 5; // we’ll flip it in rendering for the downward shot
-//            };
-//        }
-//
-//        // position it at the boss’s “gun”
-//        bomb.setDestroyed(false);
-//        bomb.setX(this.x);
-//        bomb.setY(this.y + clips[0].height/2);
-//    }
-
     public Bomb getBomb() { return bomb; }
 
     public class Bomb extends Enemy.Bomb {
@@ -166,9 +167,6 @@ public class Boss extends Enemy{
             this.x = x;
             this.y = y;
 
-//            var bombImg = "src/images/bomb.png";
-//            var ii = new ImageIcon(bombImg);
-//            setImage(ii.getImage());
             var ii = new ImageIcon(IMG_BOSS);
 
             // Scale the image to use the global scaling factor
@@ -177,26 +175,6 @@ public class Boss extends Enemy{
                     java.awt.Image.SCALE_SMOOTH);
             setImage(scaledImage);
         }
-
-//        @Override
-//        public void act() {
-//            // move left
-//            this.x -= (bombAction==BOMB_POWER ? 8 : 6);
-//
-//            // vertical deflection for normal spread
-//            if (bombAction==BOMB_NORMAL) {
-//                if (bombClipNo==5) {
-//                    // we used clip[5] for “up” shot
-//                    this.y -= 3;
-//                } else if (bombClipNo==4) {
-//                    // center, no change
-//                } else {
-//                    // for downward shot reuse clip[5] but flip rendering
-//                    this.y += 3;
-//                }
-//            }
-//            if (this.x < -100) setDestroyed(true);
-//        }
 
         public void setVelocity(double vx, double vy) {
             this.vx = vx;
@@ -230,5 +208,17 @@ public class Boss extends Enemy{
 
     public boolean isFiring() {
         return isFiring;
+    }
+
+    @Override
+    public Image getImage() {
+        return clipImages[clipNo];
+    }
+
+    public BufferedImage getClipImage(int idx) {
+        if (idx < 0 || idx >= clipImages.length) {
+            throw new IndexOutOfBoundsException("Invalid clip index: " + idx);
+        }
+        return clipImages[idx];
     }
 }

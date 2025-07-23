@@ -15,6 +15,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
 import java.util.*;
 import java.util.List;
 
@@ -147,25 +148,9 @@ public class Scene2 extends JPanel {
 
     private void drawBoss(Graphics g) {
         if (boss != null && boss.isVisible()) {
-            Rectangle clip = boss.clips[boss.clipNo];
-            int s = SCALE_FACTOR;  // same factor you used when you scaled the image
-
-            // compute source coords on the scaled image
-            int sx1 = clip.x * s;
-            int sy1 = clip.y * s;
-            int sx2 = sx1 + clip.width * s;
-            int sy2 = sy1 + clip.height * s;
-
-            // compute destination rectangle on screen
-            int dx1 = boss.getX();
-            int dy1 = boss.getY();
-            int dx2 = dx1 + clip.width * s;
-            int dy2 = dy1 + clip.height * s;
-
             g.drawImage(
                     boss.getImage(),
-                    dx1, dy1, dx2, dy2,   // where on the screen
-                    sx1, sy1, sx2, sy2,   // which part of the (already scaled) sheet
+                    boss.getX(), boss.getY(),
                     this
             );
         }
@@ -323,16 +308,11 @@ public class Scene2 extends JPanel {
 
     private void drawBossBomb(Graphics g) {
         for (Boss.Bomb b : bossBombs) {
-            Rectangle clip = boss.clips[b.getClipNo()];
-            int s = SCALE_FACTOR;
-            int sx1 = clip.x*s,           sy1 = clip.y*s;
-            int sx2 = sx1+clip.width*s,   sy2 = sy1+clip.height*s;
-            int dx1 = b.getX(),           dy1 = b.getY();
-            int dx2 = dx1+clip.width*s,   dy2 = dy1+clip.height*s;
+            // pull the right sub-image from the cache
+            BufferedImage img = boss.getClipImage(b.getClipNo());
             g.drawImage(
-                    boss.getImage(),
-                    dx1, dy1, dx2, dy2,
-                    sx1, sy1, sx2, sy2,
+                    img,
+                    b.getX(), b.getY(),      // dest x,y
                     this
             );
         }
