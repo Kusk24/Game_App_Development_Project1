@@ -267,36 +267,7 @@ public class Scene1 extends JPanel {
     private void drawShot(Graphics g) {
 
         for (Shot shot : shots) {
-
-            if (shot.isVisible()) {
-//                g.drawImage(shot.getImage(), shot.getX(), shot.getY(), this);
-                Rectangle clip = shot.clips[shot.clipNo];
-                int s = 1;  // same factor you used when you scaled the image
-
-                // compute source coords on the scaled image
-                int sx1 = clip.x * s;
-                int sy1 = clip.y * s;
-                int sx2 = sx1 + clip.width * s;
-                int sy2 = sy1 + clip.height * s;
-
-                // compute destination rectangle on screen
-                int dx1 = shot.getX();
-                int dy1 = shot.getY();
-                if (shot.clipNo == 8){
-                    dx1 -= 10;
-                }else if (shot.clipNo == 9){
-                    dx1 -= 20;
-                }
-                int dx2 = dx1 + clip.width * s;
-                int dy2 = dy1 + clip.height * s;
-
-                g.drawImage(
-                        shot.getImage(),
-                        dx1, dy1, dx2, dy2,   // where on the screen
-                        sx1, sy1, sx2, sy2,   // which part of the (already scaled) sheet
-                        this
-                );
-            }
+                g.drawImage(shot.getImage(), shot.getX(), shot.getY(), this);
         }
     }
 

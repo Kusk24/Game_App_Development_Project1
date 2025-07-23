@@ -3,12 +3,15 @@ package gdd.sprite;
 import static gdd.Global.*;
 import javax.swing.ImageIcon;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 
 public class Shot extends Sprite {
 
     private static final int H_SPACE = 20;
     private static final int V_SPACE = 1;
     private boolean isVertical = true;
+
+    private BufferedImage[] clipImages;
 
     private static final int SHOT_LEVEL_1 = 1;
     private static final int SHOT_LEVEL_2 = 2;
@@ -68,12 +71,32 @@ public class Shot extends Sprite {
         setVertical(isVertical);
         setShotLevel(level);
         var ii = new ImageIcon(IMG_SPRITE);
+        // we know these immediately:
+        int fullW = ii.getIconWidth();
+        int fullH = ii.getIconHeight();
 
-        // Scale the image to use the global scaling factor
-        var scaledImage = ii.getImage().getScaledInstance(ii.getIconWidth(),
-                ii.getIconHeight(),
-                java.awt.Image.SCALE_SMOOTH);
-        setImage(scaledImage);
+        // create a buffered image at the right size:
+        BufferedImage fullBuffered = new BufferedImage(fullW, fullH, BufferedImage.TYPE_INT_ARGB);
+
+        // draw & scale the raw icon into it in one go:
+        Graphics2D g2 = fullBuffered.createGraphics();
+        g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+                RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        g2.drawImage(ii.getImage(), 0, 0, fullW, fullH, null);
+        g2.dispose();
+
+        // now slice your clips:
+        clipImages = new BufferedImage[clips.length];
+        for (int i = 0; i < clips.length; i++) {
+            Rectangle r = clips[i];
+            clipImages[i] = fullBuffered.getSubimage(
+                    r.x,
+                    r.y,
+                    r.width,
+                    r.height
+            );
+        }
+        setImage(clipImages[0]);
 
         setX(x + H_SPACE);
         setY(y - V_SPACE);
@@ -126,5 +149,17 @@ public class Shot extends Sprite {
 
     public void setVertical(boolean isVertical) {
         this.isVertical = isVertical;
+    }
+
+    @Override
+    public Image getImage() {
+        return clipImages[clipNo];
+    }
+
+    public BufferedImage getClipImage(int idx) {
+        if (idx < 0 || idx >= clipImages.length) {
+            throw new IndexOutOfBoundsException("Invalid clip index: " + idx);
+        }
+        return clipImages[idx];
     }
 }
