@@ -38,7 +38,7 @@ public class Scene1 extends JPanel {
     final int BLOCKS_TO_DRAW = BOARD_HEIGHT / BLOCKHEIGHT;
 
     private int direction = 2; // Positive direction for vertical scrolling (enemies move down)
-    private int deaths = 0;
+    private int score = 0;
 
     private boolean inGame = true;
     private String message = "Game Over";
@@ -67,7 +67,8 @@ public class Scene1 extends JPanel {
         // gameInit();
         try {
             MAP = SceneLoader.loadMap("src/gdd/resources/vertical_map.csv");
-            spawnMap = new HashMap<>(SceneLoader.loadSpawnDetails("src/gdd/resources/vertical_spawns.csv", BOARD_WIDTH, false));
+            spawnMap = new HashMap<>(
+                    SceneLoader.loadSpawnDetails("src/gdd/resources/spawn_balanced.csv", BOARD_WIDTH, false));
         } catch (IOException e) {
             System.err.println("Error loading scene data: " + e.getMessage());
         }
@@ -255,8 +256,7 @@ public class Scene1 extends JPanel {
         if (player != null && player.isDying()) {
             player.die();
             inGame = false;
-        }
-        else if (player != null && player.isVisible()) {
+        } else if (player != null && player.isVisible()) {
             g.drawImage(player.getImage(), player.getX(), player.getY(), this);
         }
     }
@@ -264,7 +264,7 @@ public class Scene1 extends JPanel {
     private void drawShot(Graphics g) {
 
         for (Shot shot : shots) {
-                g.drawImage(shot.getImage(), shot.getX(), shot.getY(), this);
+            g.drawImage(shot.getImage(), shot.getX(), shot.getY(), this);
         }
     }
 
@@ -310,7 +310,7 @@ public class Scene1 extends JPanel {
 
         g.setColor(Color.white);
         g.drawString("FRAME: " + frame, 10, 10);
-        g.drawString("Score :" + deaths * 10, 10, 25);
+        g.drawString("Score :" + score, 10, 25);
         // Speed
         if (player.getCurrentSpeedLevel() == 4) {
             g.drawString("Speed Upgraded: Max Level " + player.getCurrentSpeedLevel() + " ("
@@ -410,14 +410,12 @@ public class Scene1 extends JPanel {
             }
         }
 
-        if (deaths == NUMBER_OF_ALIENS_TO_DESTROY) {
-            inGame = false;
-            timer.stop();
-            message = "Game won!";
+        if (score == SCORE_TO_ADVANCE) {
+            game.loadBossIntroScene();
         }
 
         // player
-        if (player.isVisible()){
+        if (player.isVisible()) {
             player.act(true);
             player.setPlayerFrame(player.getPlayerFrame() + 1);
         }
@@ -532,31 +530,34 @@ public class Scene1 extends JPanel {
                 }
 
                 for (Enemy enemy : enemies) {
-                    if (!enemy.isVisible()) continue;
+                    if (!enemy.isVisible())
+                        continue;
 
                     // build full‐sprite bounding boxes
                     Rectangle shotRect = new Rectangle(
                             shotX,
                             shotY,
                             shot.getImage().getWidth(null),
-                            shot.getImage().getHeight(null)
-                    );
+                            shot.getImage().getHeight(null));
                     Rectangle enemyRect = new Rectangle(
                             enemy.getX(),
                             enemy.getY(),
                             enemy.getImage().getWidth(null),
-                            enemy.getImage().getHeight(null)
-                    );
+                            enemy.getImage().getHeight(null));
 
                     if (shotRect.intersects(enemyRect)) {
                         var ii = new ImageIcon(IMG_EXPLOSION);
                         enemy.setImage(ii.getImage());
                         enemy.setDying(true);
                         explosions.add(new Explosion(enemy.getX(), enemy.getY()));
-                        deaths++;
+                        if (enemy instanceof Alien1) {
+                            score += 5; // Increment score for Alien1
+                        } else if (enemy instanceof Alien2) {
+                            score += 10; // Increment score for Alien2
+                        }
                         shot.die();
                         shotsToRemove.add(shot);
-                        break;  // stop checking this shot against further enemies
+                        break; // stop checking this shot against further enemies
                     }
                 }
 
@@ -685,7 +686,7 @@ public class Scene1 extends JPanel {
                         if (shots.size() < 8) {
                             // Create a new shot and add it to the list
                             Shot shot = new Shot(x - 14, y + 45, player.getCurrentShotPower(), true);
-                            Shot shot2 = new Shot(x , y + 45, player.getCurrentShotPower(), true);
+                            Shot shot2 = new Shot(x, y + 45, player.getCurrentShotPower(), true);
                             shots.add(shot);
                             shots.add(shot2);
                         } //
@@ -693,7 +694,7 @@ public class Scene1 extends JPanel {
                     case 3:
                         if (shots.size() < 12) {
                             // Create a new shot and add it to the list
-                            Shot shot = new Shot(x -21, y + 45, player.getCurrentShotPower(), true);
+                            Shot shot = new Shot(x - 21, y + 45, player.getCurrentShotPower(), true);
                             Shot shot1 = new Shot(x - 7, y + 45, player.getCurrentShotPower(), true);
                             Shot shot2 = new Shot(x + 7, y + 45, player.getCurrentShotPower(), true);
                             shots.add(shot);
@@ -705,13 +706,13 @@ public class Scene1 extends JPanel {
                     case 4:
                         if (shots.size() < 16) {
                             // Create a new shot and add it to the list
-                            Shot shot = new Shot(x - 10 , y + 40, player.getCurrentShotPower(), true);
-                            Shot shot1 = new Shot(x + 40, y + 40 , player.getCurrentShotPower(), true);
+                            Shot shot = new Shot(x - 10, y + 40, player.getCurrentShotPower(), true);
+                            Shot shot1 = new Shot(x + 40, y + 40, player.getCurrentShotPower(), true);
                             Shot shot2 = new Shot(x - 60, y + 40, player.getCurrentShotPower(), true);
                             shots.add(shot);
                             shots.add(shot1);
                             shots.add(shot2);
-                        }//
+                        } //
                         break;
                 }
             }
