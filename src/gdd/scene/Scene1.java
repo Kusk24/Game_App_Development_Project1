@@ -212,7 +212,7 @@ public class Scene1 extends JPanel {
 
             if (alien1.isVisible()) {
 
-                g.drawImage(alien1.getImage(), alien1.getX(), alien1.getY(), this);
+                g.drawImage(player.getImage(), player.getX(), player.getY(), this);
             }
 
             if (alien1.isDying()) {
@@ -483,6 +483,8 @@ public class Scene1 extends JPanel {
             if (enemy.isVisible()) {
                 // Different movement patterns for different alien types
                 if (enemy instanceof Alien1) {
+                    ((Alien1) enemy).setAlienFrame(((Alien1) enemy).getAlienFrame() + 1);
+                    ((Alien1) enemy).act();
                     // Alien1: Simple straight down movement
                     enemy.setY(enemy.getY() + 2); // Fixed downward speed
                 } else if (enemy instanceof Alien2) {
