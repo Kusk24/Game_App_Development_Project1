@@ -1,0 +1,13 @@
+frame,type,x,y
+200,PowerUp-SpeedUp,100,150
+400,PowerUp-ShotUp,200,200
+600,PowerUp-SpeedUp,300,120
+800,PowerUp-ShotUp,400,180
+1000,PowerUp-SpeedUp,500,100
+1200,PowerUp-ShotUp,600,160
+1400,PowerUp-SpeedUp,700,140
+1600,PowerUp-ShotUp,800,170
+1800,PowerUp-SpeedUp,900,130
+2000,PowerUp-ShotUp,1000,190
+2200,PowerUp-SpeedUp,1100,110
+2400,PowerUp-ShotUp,1200,160

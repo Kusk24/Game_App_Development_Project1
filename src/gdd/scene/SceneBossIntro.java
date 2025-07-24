@@ -8,7 +8,8 @@ import javax.swing.*;
 public class SceneBossIntro extends JPanel {
 
     private final Game game;
-    private Timer timer;
+    private Timer fadeTimer;
+    private Timer transitionTimer;
     private int alpha = 0;
     private boolean fadingIn = true;
     private boolean hasLoadedScene2 = false;
@@ -23,27 +24,34 @@ public class SceneBossIntro extends JPanel {
     public void start() {
         requestFocusInWindow();
 
+        // Reset state
+        alpha = 0;
+        fadingIn = true;
+        hasLoadedScene2 = false;
+
         // Timer to repaint for fade-in effect
-        timer = new Timer(30, e -> {
+        fadeTimer = new Timer(30, e -> {
             if (fadingIn) {
                 alpha += 5;
                 if (alpha >= 255) {
                     alpha = 255;
                     fadingIn = false;
                 }
+                repaint();
             }
-            repaint();
         });
-        timer.start();
+        fadeTimer.start();
 
-        // Guarded transition to Scene2 after 3 seconds
-        new Timer(3000, e -> {
+        // One-shot transition to Scene2 after 3 seconds
+        transitionTimer = new Timer(3000, e -> {
             if (!hasLoadedScene2) {
                 hasLoadedScene2 = true;
-                timer.stop();
+                stop(); // stop both timers before switching
                 game.loadScene2();
             }
-        }).start();
+        });
+        transitionTimer.setRepeats(false);
+        transitionTimer.start();
     }
 
     @Override
@@ -65,8 +73,13 @@ public class SceneBossIntro extends JPanel {
     }
 
     public void stop() {
-        if (timer != null) {
-            timer.stop();
+        if (fadeTimer != null) {
+            fadeTimer.stop();
+            fadeTimer = null;
+        }
+        if (transitionTimer != null) {
+            transitionTimer.stop();
+            transitionTimer = null;
         }
     }
 }

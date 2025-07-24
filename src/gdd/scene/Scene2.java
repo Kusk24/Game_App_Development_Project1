@@ -3,6 +3,7 @@ package gdd.scene;
 import gdd.AudioPlayer;
 import gdd.Game;
 import static gdd.Global.*;
+import gdd.SoundEffectPlayer;
 import gdd.SpawnDetails;
 import gdd.powerup.PowerUp;
 import gdd.powerup.ShotUp;
@@ -16,6 +17,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.*;
 import java.util.List;
 import javax.swing.*;
@@ -31,6 +33,8 @@ public class Scene2 extends JPanel {
 
     private boolean inGame = true;
     private String message = "Game Over";
+    final int BLOCKHEIGHT = 50;
+    final int BLOCKWIDTH = 50;
 
     private final Dimension d = new Dimension(BOARD_WIDTH, BOARD_HEIGHT);
     private final Random randomizer = new Random();
@@ -39,6 +43,7 @@ public class Scene2 extends JPanel {
     private final Game game;
     private List<PowerUp> powerups;
 
+    private int[][] MAP = {};
     private HashMap<Integer, SpawnDetails> spawnMap = new HashMap<>();
     private AudioPlayer audioPlayer;
 
@@ -48,7 +53,12 @@ public class Scene2 extends JPanel {
 
     public Scene2(Game game) {
         this.game = game;
-        loadSpawnDetails(); // Add this line that was missing
+        try {
+            MAP = SceneLoader.loadMap("src/gdd/resources/vertical_map.csv");
+            spawnMap = new HashMap<>(SceneLoader.loadSpawnDetails("src/gdd/resources/test_boss.csv", BOARD_WIDTH, true));
+        } catch (IOException e) {
+            System.err.println("Error loading scene data: " + e.getMessage());
+        }
     }
 
     private static final int NORMAL_INTERVAL = 50;
@@ -97,11 +107,6 @@ public class Scene2 extends JPanel {
         }
     }
 
-    private void loadSpawnDetails() {
-        // spawnMap.put(50, new SpawnDetails("PowerUp-SpeedUp", BOARD_WIDTH - 200,
-        // BOARD_HEIGHT/2));
-    }
-
     private void initBoard() {
 
     }
@@ -131,6 +136,9 @@ public class Scene2 extends JPanel {
     }
 
     private void gameInit() {
+        frame = 0; // Reset frame counter on each game start
+        inGame = true; // Reset game running state
+
         explosions = new ArrayList<>();
         shots = new ArrayList<>();
         player = new Player(START_X, START_Y); // Initialize player at starting position
@@ -142,7 +150,64 @@ public class Scene2 extends JPanel {
     }
 
     private void drawMap(Graphics g) {
+        // Draw scrolling starfield background
 
+        // Calculate smooth scrolling offset (1 pixel per frame)
+        int scrollOffset = (frame) % BLOCKHEIGHT;
+
+        // Calculate which rows to draw based on screen position
+        int baseRow = (frame) / BLOCKHEIGHT;
+        int rowsNeeded = (BOARD_HEIGHT / BLOCKHEIGHT) + 2; // +2 for smooth scrolling
+
+        // Loop through rows that should be visible on screen
+        for (int screenRow = 0; screenRow < rowsNeeded; screenRow++) {
+            // Calculate which MAP row to use (with wrapping)
+            int mapRow = (baseRow + screenRow) % MAP.length;
+
+            // Calculate Y position for this row
+            // int y = (screenRow * BLOCKHEIGHT) - scrollOffset;
+            int y = BOARD_HEIGHT - ((screenRow * BLOCKHEIGHT) - scrollOffset);
+
+            // Skip if row is completely off-screen
+            if (y > BOARD_HEIGHT || y < -BLOCKHEIGHT) {
+                continue;
+            }
+
+            // Draw each column in this row
+            for (int col = 0; col < MAP[mapRow].length; col++) {
+                if (MAP[mapRow][col] == 1) {
+                    // Calculate X position
+                    int x = col * BLOCKWIDTH;
+
+                    // Draw a cluster of stars
+                    drawStarCluster(g, x, y, BLOCKWIDTH, BLOCKHEIGHT);
+                }
+            }
+        }
+
+    }
+
+    private void drawStarCluster(Graphics g, int x, int y, int width, int height) {
+        // Set star color to white
+        g.setColor(Color.WHITE);
+
+        // Draw multiple stars in a cluster pattern
+        // Main star (larger)
+        int centerX = x + width / 2;
+        int centerY = y + height / 2;
+        g.fillOval(centerX - 2, centerY - 2, 4, 4);
+
+        // Smaller surrounding stars
+        g.fillOval(centerX - 15, centerY - 10, 2, 2);
+        g.fillOval(centerX + 12, centerY - 8, 2, 2);
+        g.fillOval(centerX - 8, centerY + 12, 2, 2);
+        g.fillOval(centerX + 10, centerY + 15, 2, 2);
+
+        // Tiny stars for more detail
+        g.fillOval(centerX - 20, centerY + 5, 1, 1);
+        g.fillOval(centerX + 18, centerY - 15, 1, 1);
+        g.fillOval(centerX - 5, centerY - 18, 1, 1);
+        g.fillOval(centerX + 8, centerY + 20, 1, 1);
     }
 
     private void drawBoss(Graphics g) {
@@ -225,16 +290,17 @@ public class Scene2 extends JPanel {
     }
 
     private void doDrawing(Graphics g) {
+
+        // Draw boss health bar
+        int maxHealth = boss.getBossMaxLife();
+        int currentHealth = boss.getBossLife();
+
         g.setColor(Color.black);
         g.fillRect(0, 0, d.width, d.height);
 
         g.setColor(Color.white);
         g.drawString("FRAME: " + frame, BOARD_WIDTH - 250, 10);
-        g.drawString("Score :" + (500 - boss.getBossLife()) * 10, BOARD_WIDTH - 250, 25);
-
-        // Draw boss health bar
-        int maxHealth = boss.getBossMaxLife();
-        int currentHealth = boss.getBossLife();
+        g.drawString("Boss HP :" + (currentHealth), BOARD_WIDTH - 250, 25);
 
         int barX = 50;
         int barY = 10;
@@ -298,29 +364,11 @@ public class Scene2 extends JPanel {
                 timer.stop();
             }
 
-            gameOver(g);
+            game.loadGameOverScene(); // Switch to game over screen
+            return;
         }
 
         Toolkit.getDefaultToolkit().sync();
-    }
-
-    private void gameOver(Graphics g) {
-
-        g.setColor(Color.black);
-        g.fillRect(0, 0, BOARD_WIDTH, BOARD_HEIGHT);
-
-        g.setColor(new Color(0, 32, 48));
-        g.fillRect(50, BOARD_WIDTH / 2 - 30, BOARD_WIDTH - 100, 50);
-        g.setColor(Color.white);
-        g.drawRect(50, BOARD_WIDTH / 2 - 30, BOARD_WIDTH - 100, 50);
-
-        var small = new Font("Helvetica", Font.BOLD, 14);
-        var fontMetrics = this.getFontMetrics(small);
-
-        g.setColor(Color.white);
-        g.setFont(small);
-        g.drawString(message, (BOARD_WIDTH - fontMetrics.stringWidth(message)) / 2,
-                BOARD_WIDTH / 2);
     }
 
     private void update() {
@@ -390,6 +438,11 @@ public class Scene2 extends JPanel {
                 }
 
                 if (powerup.collidesWith(player)) {
+                    if (powerup instanceof SpeedUp) {
+                        SoundEffectPlayer.play("src/audio/speedup.wav");
+                    } else if (powerup instanceof ShotUp) {
+                        SoundEffectPlayer.play("src/audio/powerup.wav");
+                    }
                     powerup.upgrade(player);
                     powerup.die(); // Make sure to kill the powerup
                     powerupsToRemove.add(powerup);
@@ -501,6 +554,7 @@ public class Scene2 extends JPanel {
 
                     // Debug output for collision
                     System.out.println("Shot hit the boss at (" + shotX + ", " + shotY + ")");
+                    SoundEffectPlayer.play("src/audio/explosion.wav");
                     explosions.add(new Explosion(bossX, shotY));
                     boss.setBossLife(boss.getBossLife() - 1); // Decrease boss life
                     shot.die();
@@ -556,47 +610,45 @@ public class Scene2 extends JPanel {
 
             if (key == KeyEvent.VK_SPACE && inGame) {
                 System.out.println("Shots: " + shots.size());
+                boolean shotFired = false;
+
                 switch (player.getCurrentShotPower()) {
                     case 1:
                         if (shots.size() < 4) {
-                            // Create a new shot and add it to the list
-                            Shot shot = new Shot(x - 10, y + 20, player.getCurrentShotPower(), false);
-                            // shot.setVertical(false);
-                            shots.add(shot);
-                        } //
-                        break;
-                    case 2:
-                        if (shots.size() < 8) {
-                            // Create a new shot and add it to the list - FIXED positioning
-                            Shot shot = new Shot(x - 10, y + 30, player.getCurrentShotPower(), false);
-                            Shot shot2 = new Shot(x - 10, y + 10, player.getCurrentShotPower(), false);
-                            shots.add(shot);
-                            shots.add(shot2);
-                        } //
-                        break;
-                    case 3:
-                        if (shots.size() < 12) {
-                            // Create a new shot and add it to the list
-                            Shot shot = new Shot(x - 10, y + 10, player.getCurrentShotPower(), false);
-                            Shot shot1 = new Shot(x - 10, y - 10, player.getCurrentShotPower(), false);
-                            Shot shot2 = new Shot(x - 10, y + 30, player.getCurrentShotPower(), false);
-                            shots.add(shot);
-                            shots.add(shot1);
-                            shots.add(shot2);
+                            shots.add(new Shot(x - 10, y + 20, player.getCurrentShotPower(), false));
+                            shotFired = true;
                         }
                         break;
-                    //
+
+                    case 2:
+                        if (shots.size() < 8) {
+                            shots.add(new Shot(x - 10, y + 30, player.getCurrentShotPower(), false));
+                            shots.add(new Shot(x - 10, y + 10, player.getCurrentShotPower(), false));
+                            shotFired = true;
+                        }
+                        break;
+
+                    case 3:
+                        if (shots.size() < 12) {
+                            shots.add(new Shot(x - 10, y + 10, player.getCurrentShotPower(), false));
+                            shots.add(new Shot(x - 10, y - 10, player.getCurrentShotPower(), false));
+                            shots.add(new Shot(x - 10, y + 30, player.getCurrentShotPower(), false));
+                            shotFired = true;
+                        }
+                        break;
+
                     case 4:
                         if (shots.size() < 16) {
-                            // Create a new shot and add it to the list
-                            Shot shot = new Shot(x - 10, y + 10, player.getCurrentShotPower(), false);
-                            Shot shot1 = new Shot(x - 10, y - 40, player.getCurrentShotPower(), false);
-                            Shot shot2 = new Shot(x - 10, y + 60, player.getCurrentShotPower(), false);
-                            shots.add(shot);
-                            shots.add(shot1);
-                            shots.add(shot2);
-                        } //
+                            shots.add(new Shot(x - 10, y + 10, player.getCurrentShotPower(), false));
+                            shots.add(new Shot(x - 10, y - 40, player.getCurrentShotPower(), false));
+                            shots.add(new Shot(x - 10, y + 60, player.getCurrentShotPower(), false));
+                            shotFired = true;
+                        }
                         break;
+                }
+
+                if (shotFired) {
+                    SoundEffectPlayer.play("src/audio/shot1.wav");
                 }
             }
         }
