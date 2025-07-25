@@ -3,6 +3,7 @@ package gdd.scene;
 import gdd.AudioPlayer;
 import gdd.Game;
 import static gdd.Global.*;
+import gdd.SoundEffectPlayer;
 import gdd.SpawnDetails;
 import gdd.powerup.PowerUp;
 import gdd.powerup.ShotUp;
@@ -13,6 +14,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,10 +40,10 @@ public class Scene1 extends JPanel {
     final int BLOCKS_TO_DRAW = BOARD_HEIGHT / BLOCKHEIGHT;
 
     private int direction = 2; // Positive direction for vertical scrolling (enemies move down)
-    private int deaths = 0;
+    private int score = 0;
 
     private boolean inGame = true;
-    private String message = "Game Over";
+    private boolean gameOverTriggered = false;
 
     private final Dimension d = new Dimension(BOARD_WIDTH, BOARD_HEIGHT);
     private final Random randomizer = new Random();
@@ -67,7 +69,8 @@ public class Scene1 extends JPanel {
         // gameInit();
         try {
             MAP = SceneLoader.loadMap("src/gdd/resources/vertical_map.csv");
-            spawnMap = new HashMap<>(SceneLoader.loadSpawnDetails("src/gdd/resources/vertical_spawns.csv", BOARD_WIDTH, false));
+            spawnMap = new HashMap<>(
+                    SceneLoader.loadSpawnDetails("src/gdd/resources/spawn_balanced.csv", BOARD_WIDTH, false));
         } catch (IOException e) {
             System.err.println("Error loading scene data: " + e.getMessage());
         }
@@ -88,6 +91,20 @@ public class Scene1 extends JPanel {
     }
 
     public void start() {
+        inGame = true;
+        gameOverTriggered = false;
+
+        // Stop old timer if exists
+        if (timer != null && timer.isRunning()) {
+            timer.stop();
+            timer = null;
+        }
+
+        // Remove existing key listeners (to prevent duplicates)
+        for (KeyListener kl : this.getKeyListeners()) {
+            this.removeKeyListener(kl);
+        }
+
         addKeyListener(new TAdapter());
         setFocusable(true);
         requestFocusInWindow();
@@ -112,6 +129,10 @@ public class Scene1 extends JPanel {
     }
 
     private void gameInit() {
+        score = 0; // Reset score
+        frame = 0; // Reset frame count
+        inGame = true; // Make sure game is marked active
+        gameOverTriggered = false; // Reset game over flag if you want
 
         enemies = new ArrayList<>();
         aleins1 = new ArrayList<>();
@@ -120,16 +141,8 @@ public class Scene1 extends JPanel {
         explosions = new ArrayList<>();
         shots = new ArrayList<>();
 
-        // for (int i = 0; i < 4; i++) {
-        // for (int j = 0; j < 6; j++) {
-        // var enemy = new Enemy(ALIEN_INIT_X + (ALIEN_WIDTH + ALIEN_GAP) * j,
-        // ALIEN_INIT_Y + (ALIEN_HEIGHT + ALIEN_GAP) * i);
-        // enemies.add(enemy);
-        // }
-        // }
         player = new Player(270, 540);
         player.setVertical(true);
-        // shot = new Shot();
     }
 
     private void drawMap(Graphics g) {
@@ -235,7 +248,7 @@ public class Scene1 extends JPanel {
         }
     }
 
-    private void drawPowreUps(Graphics g) {
+    private void drawPowerUps(Graphics g) {
 
         for (PowerUp p : powerups) {
 
@@ -255,8 +268,7 @@ public class Scene1 extends JPanel {
         if (player != null && player.isDying()) {
             player.die();
             inGame = false;
-        }
-        else if (player != null && player.isVisible()) {
+        } else if (player != null && player.isVisible()) {
             g.drawImage(player.getImage(), player.getX(), player.getY(), this);
         }
     }
@@ -264,7 +276,7 @@ public class Scene1 extends JPanel {
     private void drawShot(Graphics g) {
 
         for (Shot shot : shots) {
-                g.drawImage(shot.getImage(), shot.getX(), shot.getY(), this);
+            g.drawImage(shot.getImage(), shot.getX(), shot.getY(), this);
         }
     }
 
@@ -310,7 +322,7 @@ public class Scene1 extends JPanel {
 
         g.setColor(Color.white);
         g.drawString("FRAME: " + frame, 10, 10);
-        g.drawString("Score :" + deaths * 10, 10, 25);
+        g.drawString("Score :" + score, 10, 25);
         // Speed
         if (player.getCurrentSpeedLevel() == 4) {
             g.drawString("Speed Upgraded: Max Level " + player.getCurrentSpeedLevel() + " ("
@@ -337,45 +349,32 @@ public class Scene1 extends JPanel {
 
             drawMap(g); // Draw background stars first
             drawExplosions(g);
-            drawPowreUps(g);
+            drawPowerUps(g);
             drawAliens(g);
             drawPlayer(g);
             drawShot(g);
             drawBombing(g);
 
-        } else {
-
-            if (timer.isRunning()) {
-                timer.stop();
-            }
-
-            gameOver(g);
         }
 
         Toolkit.getDefaultToolkit().sync();
     }
 
-    private void gameOver(Graphics g) {
+    
 
-        g.setColor(Color.black);
-        g.fillRect(0, 0, BOARD_WIDTH, BOARD_HEIGHT);
-
-        g.setColor(new Color(0, 32, 48));
-        g.fillRect(50, BOARD_WIDTH / 2 - 30, BOARD_WIDTH - 100, 50);
-        g.setColor(Color.white);
-        g.drawRect(50, BOARD_WIDTH / 2 - 30, BOARD_WIDTH - 100, 50);
-
-        var small = new Font("Helvetica", Font.BOLD, 14);
-        var fontMetrics = this.getFontMetrics(small);
-
-        g.setColor(Color.white);
-        g.setFont(small);
-        g.drawString(message, (BOARD_WIDTH - fontMetrics.stringWidth(message)) / 2,
-                BOARD_WIDTH / 2);
+    private void checkGameOver() {
+        if (!inGame && !gameOverTriggered) {
+            gameOverTriggered = true; // prevent multiple calls
+            if (timer != null && timer.isRunning()) {
+                timer.stop();
+            }
+            game.loadGameOverScene();
+        }
     }
 
     private void update() {
 
+        checkGameOver();
         player.checkShotReset();
         player.checkSpeedReset();
         // Check enemy spawn
@@ -410,14 +409,12 @@ public class Scene1 extends JPanel {
             }
         }
 
-        if (deaths == NUMBER_OF_ALIENS_TO_DESTROY) {
-            inGame = false;
-            timer.stop();
-            message = "Game won!";
+        if (score == SCORE_TO_ADVANCE) {
+            game.loadBossIntroScene();
         }
 
         // player
-        if (player.isVisible()){
+        if (player.isVisible()) {
             player.act(true);
             player.setPlayerFrame(player.getPlayerFrame() + 1);
         }
@@ -430,6 +427,12 @@ public class Scene1 extends JPanel {
 
                 // Collect powerup if collided with player
                 if (powerup.collidesWith(player)) {
+                    if (powerup instanceof SpeedUp) {
+                        SoundEffectPlayer.play("src/audio/speedup.wav");
+                    } else if (powerup instanceof ShotUp) {
+                        SoundEffectPlayer.play("src/audio/powerup.wav");
+                    }
+                    // Upgrade player with the powerup
                     powerup.upgrade(player);
                     powerup.die(); // Mark it as dead/invisible
                     powerupsToRemove.add(powerup);
@@ -532,31 +535,37 @@ public class Scene1 extends JPanel {
                 }
 
                 for (Enemy enemy : enemies) {
-                    if (!enemy.isVisible()) continue;
+                    if (!enemy.isVisible())
+                        continue;
 
                     // build full‐sprite bounding boxes
                     Rectangle shotRect = new Rectangle(
                             shotX,
                             shotY,
                             shot.getImage().getWidth(null),
-                            shot.getImage().getHeight(null)
-                    );
+                            shot.getImage().getHeight(null));
                     Rectangle enemyRect = new Rectangle(
                             enemy.getX(),
                             enemy.getY(),
                             enemy.getImage().getWidth(null),
-                            enemy.getImage().getHeight(null)
-                    );
+                            enemy.getImage().getHeight(null));
 
-                    if (shotRect.intersects(enemyRect)) {
+                    if (shotRect.intersects(enemyRect) && !enemy.isDying()) {
+                        SoundEffectPlayer.play("src/audio/explosion.wav");
                         var ii = new ImageIcon(IMG_EXPLOSION);
                         enemy.setImage(ii.getImage());
                         enemy.setDying(true);
                         explosions.add(new Explosion(enemy.getX(), enemy.getY()));
-                        deaths++;
+
+                        if (enemy instanceof Alien1) {
+                            score += 5; // Increment score for Alien1
+                        } else if (enemy instanceof Alien2) {
+                            score += 10; // Increment score for Alien2
+                        }
+
                         shot.die();
                         shotsToRemove.add(shot);
-                        break;  // stop checking this shot against further enemies
+                        break; // stop checking this shot against further enemies
                     }
                 }
 
@@ -571,35 +580,6 @@ public class Scene1 extends JPanel {
             }
         }
         shots.removeAll(shotsToRemove);
-
-        // enemies
-        // for (Enemy enemy : enemies) {
-        // int x = enemy.getX();
-        // if (x >= BOARD_WIDTH - BORDER_RIGHT && direction != -1) {
-        // direction = -1;
-        // for (Enemy e2 : enemies) {
-        // e2.setY(e2.getY() + GO_DOWN);
-        // }
-        // }
-        // if (x <= BORDER_LEFT && direction != 1) {
-        // direction = 1;
-        // for (Enemy e : enemies) {
-        // e.setY(e.getY() + GO_DOWN);
-        // }
-        // }
-        // }
-        // for (Enemy enemy : enemies) {
-        // if (enemy.isVisible()) {
-        // int y = enemy.getY();
-        // if (y > GROUND - ALIEN_HEIGHT) {
-        // inGame = false;
-        // message = "Invasion!";
-        // }
-        // enemy.act(direction);
-        // }
-        // }
-        // bombs - collision detection
-        // Bomb is with enemy, so it loops over enemies
 
         for (Enemy enemy : enemies) {
 
@@ -626,6 +606,7 @@ public class Scene1 extends JPanel {
 
                 var ii = new ImageIcon(IMG_EXPLOSION);
                 player.setImage(ii.getImage());
+                SoundEffectPlayer.play("src/audio/death.wav");
                 player.setDying(true);
                 bomb.setDestroyed(true);
             }
@@ -673,46 +654,45 @@ public class Scene1 extends JPanel {
 
             if (key == KeyEvent.VK_SPACE && inGame) {
                 System.out.println("Shots: " + shots.size());
+                boolean shotFired = false;
+
                 switch (player.getCurrentShotPower()) {
                     case 1:
                         if (shots.size() < 4) {
-                            // Create a new shot and add it to the list
-                            Shot shot = new Shot(x - 7, y + 40, player.getCurrentShotPower(), true);
-                            shots.add(shot);
-                        } //
-                        break;
-                    case 2:
-                        if (shots.size() < 8) {
-                            // Create a new shot and add it to the list
-                            Shot shot = new Shot(x - 14, y + 45, player.getCurrentShotPower(), true);
-                            Shot shot2 = new Shot(x , y + 45, player.getCurrentShotPower(), true);
-                            shots.add(shot);
-                            shots.add(shot2);
-                        } //
-                        break;
-                    case 3:
-                        if (shots.size() < 12) {
-                            // Create a new shot and add it to the list
-                            Shot shot = new Shot(x -21, y + 45, player.getCurrentShotPower(), true);
-                            Shot shot1 = new Shot(x - 7, y + 45, player.getCurrentShotPower(), true);
-                            Shot shot2 = new Shot(x + 7, y + 45, player.getCurrentShotPower(), true);
-                            shots.add(shot);
-                            shots.add(shot1);
-                            shots.add(shot2);
+                            shots.add(new Shot(x - 7, y + 40, player.getCurrentShotPower(), true));
+                            shotFired = true;
                         }
                         break;
-                    //
+
+                    case 2:
+                        if (shots.size() < 8) {
+                            shots.add(new Shot(x - 14, y + 45, player.getCurrentShotPower(), true));
+                            shots.add(new Shot(x, y + 45, player.getCurrentShotPower(), true));
+                            shotFired = true;
+                        }
+                        break;
+
+                    case 3:
+                        if (shots.size() < 12) {
+                            shots.add(new Shot(x - 21, y + 45, player.getCurrentShotPower(), true));
+                            shots.add(new Shot(x - 7, y + 45, player.getCurrentShotPower(), true));
+                            shots.add(new Shot(x + 7, y + 45, player.getCurrentShotPower(), true));
+                            shotFired = true;
+                        }
+                        break;
+
                     case 4:
                         if (shots.size() < 16) {
-                            // Create a new shot and add it to the list
-                            Shot shot = new Shot(x - 10 , y + 40, player.getCurrentShotPower(), true);
-                            Shot shot1 = new Shot(x + 40, y + 40 , player.getCurrentShotPower(), true);
-                            Shot shot2 = new Shot(x - 60, y + 40, player.getCurrentShotPower(), true);
-                            shots.add(shot);
-                            shots.add(shot1);
-                            shots.add(shot2);
-                        }//
+                            shots.add(new Shot(x - 10, y + 40, player.getCurrentShotPower(), true));
+                            shots.add(new Shot(x + 40, y + 40, player.getCurrentShotPower(), true));
+                            shots.add(new Shot(x - 60, y + 40, player.getCurrentShotPower(), true));
+                            shotFired = true;
+                        }
                         break;
+                }
+
+                if (shotFired) {
+                    SoundEffectPlayer.play("src/audio/shot1.wav"); // ✅ Play sound only when shot was added
                 }
             }
         }
