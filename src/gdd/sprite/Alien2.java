@@ -1,9 +1,9 @@
 package gdd.sprite;
 
 import static gdd.Global.*;
-import javax.swing.ImageIcon;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import javax.swing.ImageIcon;
 
 public class Alien2 extends Enemy {
 

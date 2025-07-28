@@ -21,7 +21,7 @@ public class Boss extends Enemy{
     private static final int ACT_SHOOT = 1;
     private static final int ACT_DYING = 2;
     private int action = ACT_FLYING;
-    private final int bossMaxLife = 300;
+    private final int bossMaxLife = 2200;
     private int bossLife = bossMaxLife;
     private int frame = 0;
 

@@ -479,30 +479,23 @@ public class Scene1 extends JPanel {
         }
         powerups.removeAll(powerupsToRemove);
 
-        // Check boundaries for Alien2 horizontal movement (similar to Scene1Hor's
-        // vertical logic)
+        // Check boundaries for Alien2 horizontal movement (fix glitch at right edge)
         for (Enemy enemy : enemies) {
             if (enemy instanceof Alien2) {
                 int x = enemy.getX();
+                int alienWidth = ALIEN_WIDTH;
 
-                // From right to left boundary
-                if (x >= BOARD_WIDTH - BORDER_RIGHT - ALIEN_WIDTH && direction != -2) {
+                // Right boundary check
+                if (x + alienWidth >= BOARD_WIDTH - BORDER_RIGHT) {
                     direction = -2; // Move left
-                    for (Enemy e2 : enemies) {
-                        if (e2 instanceof Alien2) {
-                            e2.setX(e2.getX() - GO_DOWN); // Move left when hitting right boundary
-                        }
-                    }
+                    // Correct position to stay within bounds
+                    enemy.setX(BOARD_WIDTH - BORDER_RIGHT - alienWidth);
                 }
-
-                // From left to right boundary
-                if (x <= BORDER_LEFT && direction != 2) {
+                // Left boundary check
+                if (x <= BORDER_LEFT) {
                     direction = 2; // Move right
-                    for (Enemy e : enemies) {
-                        if (e instanceof Alien2) {
-                            e.setX(e.getX() + GO_DOWN); // Move right when hitting left boundary
-                        }
-                    }
+                    // Correct position to stay within bounds
+                    enemy.setX(BORDER_LEFT);
                 }
             }
         }
@@ -523,6 +516,17 @@ public class Scene1 extends JPanel {
                     (enemy).act();
                     enemy.setY(enemy.getY() + 2); // Move down at same speed as Alien1
                     enemy.setX(enemy.getX() + direction); // Move horizontally based on boundary direction
+
+                    // --- FIX: Prevent Alien2 from moving out of bounds after movement ---
+                    if (enemy.getX() + ALIEN_WIDTH > BOARD_WIDTH - BORDER_RIGHT) {
+                        enemy.setX(BOARD_WIDTH - BORDER_RIGHT - ALIEN_WIDTH);
+                        direction = -2;
+                    }
+                    if (enemy.getX() < BORDER_LEFT) {
+                        enemy.setX(BORDER_LEFT);
+                        direction = 2;
+                    }
+                    // ---------------------------------------------------------------
                 } else {
                     // Default enemy movement - straight down
                     enemy.setY(enemy.getY() + 2);
