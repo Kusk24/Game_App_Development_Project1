@@ -16,6 +16,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -33,6 +34,7 @@ public class Scene2 extends JPanel {
     private List<Boss.Bomb> bossBombs;
 
     private boolean inGame = true;
+    private boolean gameOverTriggered = false;
     private String message = "Game Over";
     final int BLOCKHEIGHT = 50;
     final int BLOCKWIDTH = 50;
@@ -56,14 +58,15 @@ public class Scene2 extends JPanel {
         this.game = game;
         try {
             MAP = SceneLoader.loadMap("src/gdd/resources/vertical_map.csv");
-            spawnMap = new HashMap<>(SceneLoader.loadSpawnDetails("src/gdd/resources/test_boss.csv", BOARD_WIDTH, true));
+            spawnMap = new HashMap<>(
+                    SceneLoader.loadSpawnDetails("src/gdd/resources/test_boss.csv", BOARD_WIDTH, true));
         } catch (IOException e) {
             System.err.println("Error loading scene data: " + e.getMessage());
         }
     }
 
-    private static final int NORMAL_INTERVAL = 50;
-    private static final double NORMAL_SPEED = 6.0;
+    private static final int NORMAL_INTERVAL = 100;
+    private static final double NORMAL_SPEED = 3.0;
 
     private void spawnNormalBombs() {
         double centerX = boss.getX();
@@ -80,8 +83,8 @@ public class Scene2 extends JPanel {
         }
     }
 
-    private static final int POWER_INTERVAL = 400;
-    private static final double POWER_SPEED = 8.0;
+    private static final int POWER_INTERVAL = 600;
+    private static final double POWER_SPEED = 4.0;
 
     private void spawnPowerBombs() {
         double cx = boss.getX();
@@ -113,7 +116,21 @@ public class Scene2 extends JPanel {
     }
 
     public void start() {
-        addKeyListener(new Scene2.TAdapter());
+        inGame = true;
+        gameOverTriggered = false;
+
+        // Stop old timer if exists
+        if (timer != null && timer.isRunning()) {
+            timer.stop();
+            timer = null;
+        }
+
+        // Remove existing key listeners (to prevent duplicates)
+        for (KeyListener kl : this.getKeyListeners()) {
+            this.removeKeyListener(kl);
+        }
+
+        addKeyListener(new TAdapter());
         setFocusable(true);
         requestFocusInWindow();
         setBackground(Color.black);
@@ -139,10 +156,14 @@ public class Scene2 extends JPanel {
     private void gameInit() {
         frame = 0; // Reset frame counter on each game start
         inGame = true; // Reset game running state
+        inGame = true; // Make sure game is marked active
+        gameOverTriggered = false; // Reset game over flag if you want
 
         explosions = new ArrayList<>();
         shots = new ArrayList<>();
         player = new Player(START_X, START_Y); // Initialize player at starting position
+        player.setCurrentShotPower(1);
+        player.setCurrentSpeedLevel(1);
         player.setVertical(false);
         player.clipNo = 4;
         powerups = new ArrayList<>();
@@ -374,21 +395,24 @@ public class Scene2 extends JPanel {
             drawShot(g);
             drawBossBomb(g);
 
-        } else {
-
-            if (timer.isRunning()) {
-                timer.stop();
-            }
-
-            game.loadGameOverScene(); // Switch to game over screen
-            return;
         }
 
         Toolkit.getDefaultToolkit().sync();
     }
 
+    private void checkGameOver() {
+        if (!inGame && !gameOverTriggered) {
+            gameOverTriggered = true; // prevent multiple calls
+            if (timer != null && timer.isRunning()) {
+                timer.stop();
+            }
+            game.loadGameOverScene();
+        }
+    }
+
     private void update() {
 
+        checkGameOver();
         player.checkShotReset();
         player.checkSpeedReset();
 
@@ -411,7 +435,7 @@ public class Scene2 extends JPanel {
             }
         }
 
-        if (boss.getBossLife() == 0) {
+        if (boss.getBossLife() <= 0) {
             boss.die();
             inGame = false;
             timer.stop();
