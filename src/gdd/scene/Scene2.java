@@ -16,6 +16,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.*;
@@ -243,6 +244,8 @@ public class Scene2 extends JPanel {
         for (Explosion explosion : explosions) {
 
             if (explosion.isVisible()) {
+                explosion.setBoss(true);
+                explosion.act();
                 g.drawImage(explosion.getImage(), explosion.getX(), explosion.getY(), this);
                 explosion.visibleCountDown();
                 if (!explosion.isVisible()) {
@@ -279,13 +282,26 @@ public class Scene2 extends JPanel {
     }
 
     private void drawBossBomb(Graphics g) {
+        Graphics2D g2d = (Graphics2D) g;
         for (Boss.Bomb b : bossBombs) {
-            // pull the right sub-image from the cache
             BufferedImage img = boss.getClipImage(b.getClipNo());
-            g.drawImage(
-                    img,
-                    b.getX(), b.getY(), // dest x,y
-                    this);
+            int cx = b.getX();
+            int cy = b.getY();
+            int iw = img.getWidth();
+            int ih = img.getHeight();
+            double angle = b.getRotationAngle();
+
+            // Rotate power shots (clipNo 6 or 7) by 45 degrees every frame
+            if (b.getClipNo() == 6 || b.getClipNo() == 7) {
+                b.incrementRotation45();
+                angle = b.getRotationAngle();
+            }
+
+            AffineTransform old = g2d.getTransform();
+            g2d.translate(cx + iw / 2, cy + ih / 2);
+            g2d.rotate(angle);
+            g2d.drawImage(img, -iw / 2, -ih / 2, null);
+            g2d.setTransform(old);
         }
     }
 

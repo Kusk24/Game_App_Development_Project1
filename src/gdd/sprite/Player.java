@@ -82,6 +82,11 @@ public class Player extends Sprite {
             );
         }
         setImage(clipImages[0]);
+
+        // Set width and height based on the current clip image
+        this.width = clipImages[clipNo].getWidth();
+        this.height = clipImages[clipNo].getHeight();
+
         setX(x);
         setY(y);
     }
@@ -320,6 +325,11 @@ public class Player extends Sprite {
 
     @Override
     public Image getImage() {
+        // Update width and height when clip image changes
+        if (clipImages != null && clipNo >= 0 && clipNo < clipImages.length) {
+            this.width = clipImages[clipNo].getWidth();
+            this.height = clipImages[clipNo].getHeight();
+        }
         return clipImages[clipNo];
     }
 
