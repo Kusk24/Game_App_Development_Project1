@@ -415,7 +415,9 @@ public class Scene2 extends JPanel {
             boss.die();
             inGame = false;
             timer.stop();
-            message = "Game won!";
+            // Show "Game Won!" message
+            game.loadGameOverScene("Game Won!");
+            return; // Prevent further updates
         } else {
             boss.setBossFrame(boss.getBossFrame() + 1);
             boss.act(direction);

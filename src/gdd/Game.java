@@ -84,6 +84,12 @@ public class Game extends JFrame {
     }
 
     public void loadGameOverScene() {
+        loadGameOverScene("GAME OVER");
+    }
+
+    // Add overloaded method to accept a custom message
+    public void loadGameOverScene(String message) {
+        sceneGameOver.setMessage(message);
         switchScene(sceneGameOver);
     }
 }
