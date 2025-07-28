@@ -157,8 +157,9 @@ public class Boss extends Enemy{
     public class Bomb extends Enemy.Bomb {
 
         private double vx, vy;
-        // ② store this bomb’s sub-sprite index
         private int bombClipNo;
+        private double rotationAngle = 0; // angle in radians
+        private int rotationFrameCount = 0; // for slow rotation
 
         public Bomb(int x, int y) {
             super(x,y);
@@ -182,9 +183,9 @@ public class Boss extends Enemy{
         public void setVelocity(double vx, double vy) {
             this.vx = vx;
             this.vy = vy;
+            this.rotationAngle = Math.atan2(vy, vx);
         }
 
-        /** ② called by Scene2.spawn*Bombs() */
         public void setClipNo(int idx) {
             this.bombClipNo = idx;
         }
@@ -192,11 +193,27 @@ public class Boss extends Enemy{
             return bombClipNo;
         }
 
+        public double getRotationAngle() {
+            return rotationAngle;
+        }
+
+        /** Call this to rotate power shot by 45 degrees every 3 frames */
+        public void incrementRotation45() {
+            rotationFrameCount++;
+            if (rotationFrameCount >= 5) {
+                this.rotationAngle += Math.toRadians(45);
+                rotationFrameCount = 0;
+            }
+        }
+
         @Override
         public void act() {
-            // move by your velocity each frame
             this.x += vx;
             this.y += vy;
+            // Only update rotation for normal bombs, not power shots
+            if (bombClipNo != 6 && bombClipNo != 7) {
+                this.rotationAngle = Math.atan2(vy, vx);
+            }
 
             // kill when off-screen
             if (x < -100 || y < -100 || y > BOARD_HEIGHT + 100) {

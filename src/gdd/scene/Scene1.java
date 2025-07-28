@@ -297,8 +297,9 @@ public class Scene1 extends JPanel {
         for (Explosion explosion : explosions) {
 
             if (explosion.isVisible()) {
-                g.drawImage(explosion.getImage(), explosion.getX(), explosion.getY(), this);
-                explosion.visibleCountDown();
+                // Call act() to advance animation frames
+                explosion.act();
+                g.drawImage(explosion.getImage(), explosion.getX() + 10, explosion.getY() + 20, this);
                 if (!explosion.isVisible()) {
                     toRemove.add(explosion);
                 }
