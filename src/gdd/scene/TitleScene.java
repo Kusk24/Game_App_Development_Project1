@@ -147,7 +147,7 @@ public class TitleScene extends JPanel {
             if (key == KeyEvent.VK_SPACE) {
                 // Load the next scene
                 game.loadScene2();
-                // game.loadScene2();
+                // game.loadScene1();
             }
         }
     }
