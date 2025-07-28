@@ -1,29 +1,29 @@
 package gdd.sprite;
 
 import static gdd.Global.*;
-import javax.swing.ImageIcon;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import javax.swing.ImageIcon;
 
-public class Alien1 extends Enemy {
+public class Alien2 extends Enemy {
 
     private Bomb bomb;
-
     private BufferedImage[] clipImages;
     private int clipNo = 0;
     private Rectangle[] clips = {
-            new Rectangle(46, 98, 62, 48), // Placeholder for Alien1 image clip
-            new Rectangle(111, 95, 62, 48), // Placeholder for Alien1 image clip
-            new Rectangle(175, 96, 62, 48), // Placeholder for Alien1 image clip
-            new Rectangle(240, 96, 62, 48),  // Placeholder for Alien1 image clip
-            new Rectangle(46, 160, 62, 48),
-            new Rectangle(111, 160, 62, 48), // Placeholder for Alien1 image clip
-            new Rectangle(175, 158, 62, 48),
-            new Rectangle(240, 158, 62, 48),
+            new Rectangle(48, 84, 65, 48), // Placeholder for Alien1 image clip
+            new Rectangle(112, 84, 65, 48), // Placeholder for Alien1 image clip
+            new Rectangle(177, 84, 65, 48), // Placeholder for Alien1 image clip
+            new Rectangle(243, 84, 65, 48),  // Placeholder for Alien1 image clip
+            new Rectangle(48, 147, 65, 48),
+            new Rectangle(112, 147, 65, 48), // Placeholder for Alien1 image clip
+            new Rectangle(177, 147, 65, 48),
+            new Rectangle(242, 147, 65, 48),
     };
     private int alienFrame = 0;
 
-    public Alien1(int x, int y) {
+
+    public Alien2(int x, int y) {
         super(x, y);
          initEnemy(x, y);
     }
@@ -33,17 +33,9 @@ public class Alien1 extends Enemy {
         this.x = x;
         this.y = y;
 
-        bomb = new Bomb(x , y);
+        bomb = new Bomb(x, y);
 
-//        var ii = new ImageIcon(IMG_ENEMY);
-//
-//        // Scale the image to use the global scaling factor
-//        var scaledImage = ii.getImage().getScaledInstance(ii.getIconWidth() * SCALE_FACTOR,
-//                ii.getIconHeight() * SCALE_FACTOR,
-//                java.awt.Image.SCALE_SMOOTH);
-//        setImage(scaledImage);
-
-        var ii = new ImageIcon(IMG_ALIEN1);
+        var ii = new ImageIcon(IMG_ALIEN2);
         // we know these immediately:
         int fullW = ii.getIconWidth() ;
         int fullH = ii.getIconHeight() ;
@@ -72,10 +64,10 @@ public class Alien1 extends Enemy {
         setImage(clipImages[0]);
     }
 
-    // For vertical scrolling, Alien1 moves straight down
-    public void act(int direction) {
+    // For vertical scrolling, Alien2 has more complex movement
+    public void act(int direction, boolean isVertical) {
         // Movement is handled by Scene1 for better control
-        // This method can be used for any specific Alien1 behavior
+        // This method can be used for any specific Alien2 behavior
         if (alienFrame > 15) {
             if (clipNo == 7) {
                 alienFrame = 0; // Reset alienFrame to loop through the frames
@@ -91,7 +83,6 @@ public class Alien1 extends Enemy {
     public void act() {
         // Default behavior for when no specific movement is needed
         // Movement is controlled by Scene1 for vertical scrolling
-
         if (alienFrame > 15) {
             if (clipNo == 7) {
                 alienFrame = 0; // Reset alienFrame to loop through the frames
@@ -104,23 +95,21 @@ public class Alien1 extends Enemy {
     }
 
     public Bomb getBomb() {
-
         return bomb;
     }
 
     public class Bomb extends Enemy.Bomb {
 
-        private boolean destroyed;
         private int bombClipNo;
         private int bombFrame = 0; // Frame counter for bomb animation
         private BufferedImage[] bombClipImages;
         private Rectangle[] bombClips = {
-                new Rectangle(5,1, 13, 35), //8
-                new Rectangle(22, 0, 13, 35),
-                new Rectangle(40, 1, 13, 35),
-                new Rectangle(58, 0, 13, 35), //11
+                new Rectangle(5, 37, 13, 35), //12
+                new Rectangle(22, 36, 13, 35),
+                new Rectangle(40, 37, 13, 35),
+                new Rectangle(58, 36, 13, 35) //15
         };
-
+        private boolean destroyed;
 
         public Bomb(int x, int y) {
             super(x,y);
@@ -163,18 +152,12 @@ public class Alien1 extends Enemy {
             setImage(bombClipImages[0]);
         }
 
-        @Override
-        public BufferedImage getImage() {
-            return bombClipImages[bombClipNo];
-        }
-
         public void setDestroyed(boolean destroyed) {
 
             this.destroyed = destroyed;
         }
 
         public boolean isDestroyed() {
-
             return destroyed;
         }
 
@@ -184,7 +167,7 @@ public class Alien1 extends Enemy {
 
         @Override
         public void act() {
-            this.x -= 4; // Move the bomb left at a faster speed
+            this.x -= 4;// Move the bomb left at a faster speed
 
             if (bombFrame > 15) {
                 if (bombClipNo == 3) {
@@ -217,17 +200,15 @@ public class Alien1 extends Enemy {
                 this.x -= 4; // Move left if not vertical
             }
             bombFrame++;
+
             if (this.x < 0 || this.y < 0) {
                 setDestroyed(true);
             }
         }
 
-        public void setBombFrame(int bombFrame) {
-            this.bombFrame = bombFrame;
-        }
-
-        public int getBombFrame() {
-            return bombFrame;
+        @Override
+        public BufferedImage getImage() {
+            return bombClipImages[bombClipNo];
         }
     }
 

@@ -5,7 +5,7 @@ import javax.swing.ImageIcon;
 
 public class Enemy extends Sprite {
 
-    // private Bomb bomb;
+     private Bomb bomb;
 
     public Enemy(int x, int y) {
 
@@ -33,12 +33,20 @@ public class Enemy extends Sprite {
         this.x += direction;
     }
 
+    public void act(int direction, boolean isVertical) {
+        if (isVertical) {
+            this.y += direction; // Move vertically based on direction parameter
+        } else {
+            this.x += direction; // Move horizontally based on direction parameter
+        }
+    }
+
     @Override
     public void act() {
-        // Default behavior when no direction is specified
-        // You can leave this empty, call act(0), or implement default movement
+        // Default behavior: move left for side scrolling
+        this.x -= 2;
     }
-/*
+
     public Bomb getBomb() {
 
         return bomb;
@@ -74,6 +82,23 @@ public class Enemy extends Sprite {
 
             return destroyed;
         }
+
+        @Override
+        public void act() {
+
+        }
+
+        public void act(Boolean isVertical) {
+            if (isVertical) {
+                this.y += 2; // Move down if vertical
+            } else {
+                this.x -= 4; // Move left if not vertical
+            }
+
+            if (this.x < 0 || this.y < 0) {
+                setDestroyed(true);
+            }
+        }
     }
-*/
+
 }
