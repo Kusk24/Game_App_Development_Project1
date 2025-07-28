@@ -3,6 +3,7 @@ package gdd.scene;
 import gdd.AudioPlayer;
 import gdd.Game;
 import static gdd.Global.*;
+import gdd.ImageManager;
 import gdd.SoundEffectPlayer;
 import gdd.SpawnDetails;
 import gdd.powerup.PowerUp;
@@ -15,6 +16,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -68,7 +70,7 @@ public class Scene1 extends JPanel {
         // initBoard();
         // gameInit();
         try {
-            MAP = SceneLoader.loadMap("src/gdd/resources/vertical_map.csv");
+            MAP = SceneLoader.loadMap("src/gdd/resources/natural_starfield.csv");
             spawnMap = new HashMap<>(
                     SceneLoader.loadSpawnDetails("src/gdd/resources/spawn_balanced.csv", BOARD_WIDTH, false));
         } catch (IOException e) {
@@ -146,41 +148,44 @@ public class Scene1 extends JPanel {
     }
 
     private void drawMap(Graphics g) {
-        // Draw scrolling starfield background
-
-        // Calculate smooth scrolling offset (1 pixel per frame)
         int scrollOffset = (frame) % BLOCKHEIGHT;
-
-        // Calculate which rows to draw based on screen position
         int baseRow = (frame) / BLOCKHEIGHT;
-        int rowsNeeded = (BOARD_HEIGHT / BLOCKHEIGHT) + 2; // +2 for smooth scrolling
+        int rowsNeeded = (BOARD_HEIGHT / BLOCKHEIGHT) + 2;
 
-        // Loop through rows that should be visible on screen
         for (int screenRow = 0; screenRow < rowsNeeded; screenRow++) {
-            // Calculate which MAP row to use (with wrapping)
             int mapRow = (baseRow + screenRow) % MAP.length;
-
-            // Calculate Y position for this row
-            // int y = (screenRow * BLOCKHEIGHT) - scrollOffset;
             int y = BOARD_HEIGHT - ((screenRow * BLOCKHEIGHT) - scrollOffset);
 
-            // Skip if row is completely off-screen
             if (y > BOARD_HEIGHT || y < -BLOCKHEIGHT) {
                 continue;
             }
 
-            // Draw each column in this row
             for (int col = 0; col < MAP[mapRow].length; col++) {
-                if (MAP[mapRow][col] == 1) {
-                    // Calculate X position
-                    int x = col * BLOCKWIDTH;
+                int x = col * BLOCKWIDTH;
+                int tile = MAP[mapRow][col];
 
-                    // Draw a cluster of stars
-                    drawStarCluster(g, x, y, BLOCKWIDTH, BLOCKHEIGHT);
+                switch (tile) {
+                    case 1:
+                        drawStarCluster(g, x, y, BLOCKWIDTH, BLOCKHEIGHT);
+                        break;
+                    case 2:
+                        drawPlanet(g, x, y, tile);
+                        break;
+                    case 3:
+                        drawPlanet(g, x, y, tile);
+                        break;
+                    case 4:
+                        drawNebula(g, x, y, tile);
+                        break;
+                    case 5:
+                        drawNebula(g, x, y, tile);
+                        break;
+                    case 6:
+                        drawGalaxy(g, x, y);
+                        break;
                 }
             }
         }
-
     }
 
     private void drawStarCluster(Graphics g, int x, int y, int width, int height) {
@@ -204,6 +209,29 @@ public class Scene1 extends JPanel {
         g.fillOval(centerX + 18, centerY - 15, 1, 1);
         g.fillOval(centerX - 5, centerY - 18, 1, 1);
         g.fillOval(centerX + 8, centerY + 20, 1, 1);
+    }
+
+    private void drawPlanet(Graphics g, int x, int y, int tile) {
+        String path = (tile == 2)
+                ? "src/images/planet_small.png"
+                : "src/images/planet_large.png";
+
+        BufferedImage img = ImageManager.getInstance().loadImage(path);
+        g.drawImage(img, x, y, null);
+    }
+
+    private void drawNebula(Graphics g, int x, int y, int tile) {
+        String path = (tile == 4)
+                ? "src/images/nebula_small.png"
+                : "src/images/nebula_large.png";
+
+        BufferedImage img = ImageManager.getInstance().loadImage(path);
+        g.drawImage(img, x, y, null);
+    }
+
+    private void drawGalaxy(Graphics g, int x, int y) {
+        BufferedImage img = ImageManager.getInstance().loadImage("src/images/galaxy.png");
+        g.drawImage(img, x, y, null);
     }
 
     private void drawAliens(Graphics g) {
@@ -360,8 +388,6 @@ public class Scene1 extends JPanel {
 
         Toolkit.getDefaultToolkit().sync();
     }
-
-    
 
     private void checkGameOver() {
         if (!inGame && !gameOverTriggered) {
