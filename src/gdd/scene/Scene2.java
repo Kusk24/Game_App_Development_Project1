@@ -66,7 +66,7 @@ public class Scene2 extends JPanel {
     }
 
     private static final int NORMAL_INTERVAL = 100;
-    private static final double NORMAL_SPEED = 4.0;
+    private static final double NORMAL_SPEED = 3.0;
 
     private void spawnNormalBombs() {
         double centerX = boss.getX();
@@ -83,8 +83,8 @@ public class Scene2 extends JPanel {
         }
     }
 
-    private static final int POWER_INTERVAL = 400;
-    private static final double POWER_SPEED = 8.0;
+    private static final int POWER_INTERVAL = 600;
+    private static final double POWER_SPEED = 4.0;
 
     private void spawnPowerBombs() {
         double cx = boss.getX();
