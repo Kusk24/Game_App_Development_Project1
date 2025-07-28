@@ -1,4 +1,4 @@
-# 🚀 Project: Side-Scrolling Space Shooter Game
+# 🚀 Project: Space Shooter Game
 
 > 🎮 Inspired by *Life Force / Salamander*  
 > Built from: [mchayapol/gdd-space-invaders-project](https://github.com/mchayapol/gdd-space-invaders-project)
