@@ -13,7 +13,7 @@
 
 ## 📌 Project Description
 
-This project is a **side-scrolling shooter game** featuring classic gameplay mechanics. It is developed by extending the provided base code and includes fully animated sprites, stage scrolling, boss battles, and more.
+This project is a **vertical and side-scrolling space shooter game** featuring classic gameplay mechanics. It is developed by extending the provided base code and includes fully animated sprites, stage scrolling, boss battles, and more.
 
 ---
 
