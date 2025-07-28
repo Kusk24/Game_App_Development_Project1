@@ -65,8 +65,8 @@ public class Scene2 extends JPanel {
         }
     }
 
-    private static final int NORMAL_INTERVAL = 50;
-    private static final double NORMAL_SPEED = 6.0;
+    private static final int NORMAL_INTERVAL = 100;
+    private static final double NORMAL_SPEED = 4.0;
 
     private void spawnNormalBombs() {
         double centerX = boss.getX();
@@ -435,7 +435,7 @@ public class Scene2 extends JPanel {
             }
         }
 
-        if (boss.getBossLife() == 0) {
+        if (boss.getBossLife() <= 0) {
             boss.die();
             inGame = false;
             timer.stop();

@@ -436,7 +436,7 @@ public class Scene1 extends JPanel {
             }
         }
 
-        if (score == SCORE_TO_ADVANCE) {
+        if (score >= SCORE_TO_ADVANCE) {
             game.loadBossIntroScene();
         }
 
